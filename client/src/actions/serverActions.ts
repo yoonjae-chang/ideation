@@ -3,115 +3,128 @@
 import { createClient } from "@/lib/supabase/server";
 import { prompts } from "@/prompts/prompts";
 
-type idea = {
-    id: string;
+// Type definitions
+export type Idea = {
     idea: string;
     description: string;
+}
+
+export type IdeaWithEvaluation = {
+    idea: string;
     evaluation: string;
 }
 
-type ideaRanking = {
-    id: string;
+export type IdeaRanking = {
     idea: string;
     description: string;
-    evaluation: string;
     ranking: string;
 }
 
-type ideaGeneration = {
-    ideas: idea[];
-}
-
-type ideaSchema = {
+export type IdeaSchema = {
     purpose: string;
     context: string;
-    criteria: string[];
+    criteria: Record<string, string>;
     constraints: string[];
 }
 
-type ideaRankingGeneration = {
-    ideas: ideaRanking[];
-}
-
-
-
-export async function initialSchemaGeneration(purpose: string, criteria: string) {
+// Helper function to call the chat completion model
+async function callChatCompletion(
+    systemPrompt: string,
+    userPrompt: string,
+    model: string = "gpt-4o-mini",
+    temperature: number = 1
+) {
     const supabase = await createClient();
 
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-        throw new Error(error.message);
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) {
+        throw new Error(userError.message);
     }
-    if (!data.user) {
+    if (!userData.user) {
         throw new Error('User not found');
     }
 
-    const userPrompt = prompts.initialSchemaGeneration.userPrompt.replace('{{.context}}', purpose).replace('{{.request}}', criteria).replace('{{.preferences}}', criteria).replace('{{.criteria}}', criteria);
+    for (let i = 0; i < 3; i++) {
+    const response = await supabase.functions.invoke('chatCompletionModel', {
+        body: {
+            systemPrompt,
+            userPrompt,
+            model,
+            temperature,
+        }
+    });
+
+    if (response.error) {
+        continue;
+    }
+
+        try {
+            return JSON.parse(response.data.data);
+        } catch (parseError) {
+            continue;
+        }
+    }
+}
+
+/**
+ * Generate initial schema based on user's context, purpose, and preferences
+ */
+export async function initialSchemaGeneration(
+    context: string,
+    purpose: string,
+    preferences: string
+): Promise<IdeaSchema> {
+    const userPrompt = prompts.initialSchemaGeneration.userPrompt
+        .replace('{{.context}}', context)
+        .replace('{{.purpose}}', purpose)
+        .replace('{{.preferences}}', preferences);
 
     const systemPrompt = prompts.initialSchemaGeneration.systemPrompt;
     
-    const response = await supabase.functions.invoke('chatCompletionModel', {
-        body: {
-            systemPrompt: systemPrompt,
-            userPrompt: userPrompt,
-            model: "4.0-mini",
-            temperature: 1,
-        }
-    });
-    if (response.error) {
-        throw new Error(response.error.message);
-    }
-    return response.data;
+    return await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1);
 }
 
+/**
+ * Refine schema based on user's idea rankings and preferences
+ */
+export async function refineSchemaBasedOnIdeaPreferences(
+    schema: IdeaSchema,
+    rankings: IdeaRanking[]
+): Promise<IdeaSchema> {
+    const userPrompt = prompts.refineSchemaBasedOnIdeaPreferences.userPrompt
+        .replace('{{.schema}}', JSON.stringify(schema))
+        .replace('{{.rankings}}', JSON.stringify(rankings));
 
-
-
-export async function refineSchemaBasedOnFeedback(feedback: string) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.from('ideas').insert({ feedback }).select();
-    if (error) {
-        throw new Error(error.message);
-    }
-    return data;
+    const systemPrompt = prompts.refineSchemaBasedOnIdeaPreferences.systemPrompt;
+    
+    return await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1);
 }
 
-export async function refineSchemaBasedOnIdeaPreferences(preferences: string) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.from('ideas').insert({ preferences }).select();
-    if (error) {
-        throw new Error(error.message);
-    }
-    return data;
+/**
+ * Generate ideas based on the schema
+ */
+export async function ideaGeneration(schema: IdeaSchema): Promise<Idea[]> {
+    const userPrompt = prompts.ideaGeneration.userPrompt
+        .replace('{{.schema}}', JSON.stringify(schema));
+
+    const systemPrompt = prompts.ideaGeneration.systemPrompt;
+    
+    return await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1.3);
 }
 
+/**
+ * Evaluate ideas based on the schema and return top 10 with evaluations
+ */
+export async function ideaEvaluation(
+    schema: IdeaSchema,
+    ideas: Idea[]
+): Promise<IdeaWithEvaluation[]> {
+    const userPrompt = prompts.ideaEvaluation.userPrompt
+        .replace('{{.schema}}', JSON.stringify(schema))
+        .replace('{{.ideas}}', JSON.stringify(ideas));
 
-export async function initialIdeaGeneration(purpose: string, preferences: string) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.from('ideas').insert({ purpose, preferences }).select();
-    if (error) {
-        throw new Error(error.message);
-    }
-    return data;
-}
-
-
-export async function ideaEvaluation(purpose: string, preferences: string) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.from('ideas').insert({ purpose, preferences }).select();
-    if (error) {
-        throw new Error(error.message);
-    }
-    return data;
-}
-
-
-export async function ideaGeneration(purpose: string, preferences: string) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.from('ideas').insert({ purpose, preferences }).select();
-    if (error) {
-        throw new Error(error.message);
-    }
-    return data;
+    const systemPrompt = prompts.ideaEvaluation.systemPrompt;
+    
+    return await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1);
 }
 
