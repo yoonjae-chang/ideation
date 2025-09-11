@@ -1,6 +1,6 @@
 "use client";
 
-import { presets } from "@/app/data/constants";
+import { presets } from "@/data/constants";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
