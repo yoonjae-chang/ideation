@@ -8,9 +8,6 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="flex-1 max-w-md">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/80 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-primary-foreground font-bold text-xl">P</span>
-              </div>
               <span className="text-foreground font-bold text-2xl">Prototyping Ideas</span>
             </div>
             <p className="text-sub-foreground text-base leading-relaxed">
