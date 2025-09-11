@@ -59,27 +59,22 @@ export default function ContextInputPanel({ onComplete, sessionData }: ContextIn
 
     setIsGenerating(true);
     try {
-      // For demo purposes, create a mock schema
-      const mockSchema = {
-        purpose: formData.purpose,
-        context: formData.context,
-        criteria: {
-          "Innovation": "Ideas should be creative and novel",
-          "Feasibility": "Ideas should be practical to implement",
-          "Impact": "Ideas should have significant positive impact"
-        },
-        constraints: [
-          "Must be implementable within 6 months",
-          "Budget under $50,000",
-          "No regulatory compliance issues"
-        ]
-      };
+      // Save the ideation session first
+      const sessionId = await saveIdeationSession(
+        formData.context,
+        formData.purpose,
+        formData.preferences
+      );
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Generate the initial schema using AI
+      const schema = await initialSchemaGeneration(
+        formData.context,
+        formData.purpose,
+        formData.preferences
+      );
 
-      const sessionDataWithId = { ...formData, id: 'demo-session' };
-      onComplete(sessionDataWithId, mockSchema);
+      const sessionDataWithId = { ...formData, id: sessionId };
+      onComplete(sessionDataWithId, schema);
     } catch (error) {
       console.error('Error generating schema:', error);
       setErrors({ general: 'Failed to generate schema. Please try again.' });

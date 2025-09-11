@@ -16,7 +16,26 @@ interface SchemaEditorPanelProps {
 }
 
 export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPanelProps) {
-  const [editedSchema, setEditedSchema] = useState<IdeaSchema>(schema);
+  // Normalize constraints to always be an array
+  const normalizeConstraints = (constraints: string[] | Record<string, string>): string[] => {
+    if (Array.isArray(constraints)) {
+      return constraints;
+    }
+    if (typeof constraints === 'object' && constraints !== null) {
+      return Object.values(constraints);
+    }
+    return [];
+  };
+
+  const normalizedSchema = {
+    ...schema,
+    constraints: normalizeConstraints(schema.constraints)
+  };
+
+  const [editedSchema, setEditedSchema] = useState<IdeaSchema>({
+    ...normalizedSchema,
+    constraints: normalizeConstraints(normalizedSchema.constraints)
+  });
   const [newCriteriaKey, setNewCriteriaKey] = useState('');
   const [newCriteriaValue, setNewCriteriaValue] = useState('');
   const [newConstraint, setNewConstraint] = useState('');
@@ -58,28 +77,37 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
 
   const handleAddConstraint = () => {
     if (newConstraint.trim()) {
-      setEditedSchema(prev => ({
-        ...prev,
-        constraints: [...prev.constraints, newConstraint.trim()]
-      }));
+      setEditedSchema(prev => {
+        const currentConstraints = normalizeConstraints(prev.constraints);
+        return {
+          ...prev,
+          constraints: [...currentConstraints, newConstraint.trim()]
+        };
+      });
       setNewConstraint('');
     }
   };
 
   const handleRemoveConstraint = (index: number) => {
-    setEditedSchema(prev => ({
-      ...prev,
-      constraints: prev.constraints.filter((_, i) => i !== index)
-    }));
+    setEditedSchema(prev => {
+      const currentConstraints = normalizeConstraints(prev.constraints);
+      return {
+        ...prev,
+        constraints: currentConstraints.filter((_, i) => i !== index)
+      };
+    });
   };
 
   const handleConstraintChange = (index: number, value: string) => {
-    setEditedSchema(prev => ({
-      ...prev,
-      constraints: prev.constraints.map((constraint, i) => 
-        i === index ? value : constraint
-      )
-    }));
+    setEditedSchema(prev => {
+      const currentConstraints = normalizeConstraints(prev.constraints);
+      return {
+        ...prev,
+        constraints: currentConstraints.map((constraint, i) => 
+          i === index ? value : constraint
+        )
+      };
+    });
   };
 
   const handleComplete = () => {
@@ -191,7 +219,7 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
           <Label className="text-base font-semibold text-gray-900">Constraints</Label>
           
           <div className="space-y-2">
-            {editedSchema.constraints.map((constraint, index) => (
+            {normalizeConstraints(editedSchema.constraints).map((constraint, index) => (
               <Card key={index} className="p-3">
                 <div className="flex gap-3 items-center">
                   <Input

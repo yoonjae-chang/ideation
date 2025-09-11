@@ -97,8 +97,9 @@ export default function RankingPanel({ ideas, rankings, onComplete }: RankingPan
       </Card>
 
       {/* Ideas Ranking */}
-      <div className="space-y-4 max-h-96 overflow-y-auto">
+      <div className="space-y-4">
         {ideas.map((idea, index) => {
+          console.log(idea);
           const ideaKey = `idea-${index}`;
           const currentRanking = currentRankings[ideaKey] || 0;
           

@@ -29,10 +29,10 @@ export const prompts = {
                 "criteria2": "Highly scalable and scalable",
                 "criteria3": "Highly profitable and profitable"
             },
-            "constraints": {
+            "constraints": [
                 "Relatively feasible to implement for my company",
-                "No traditional billboard ads",
-            },
+                "No traditional billboard ads"
+            ]
         }
         `,
         maxTokens: 4000,
@@ -64,11 +64,10 @@ export const prompts = {
                 "criteria3": "Highly profitable and profitable",
                 ...
             },
-            "constraints": {
+            "constraints": [
                 "Relatively feasible to implement for my company",
-                "No traditional billboard ads",
-                ... 
-            },
+                "No traditional billboard ads"
+            ]
         }
 
         This is the user's rankings for the success of the ideas:
@@ -102,11 +101,10 @@ export const prompts = {
                 "criteria3": "Highly profitable and profitable",
                 ...
             },
-            "constraints": {
+            "constraints": [
                 "Relatively feasible to implement for my company",
-                "No traditional billboard ads",
-                ... 
-            },
+                "No traditional billboard ads"
+            ]
         }
 
         `,
@@ -134,11 +132,10 @@ export const prompts = {
                 "criteria3": "Highly profitable and profitable",
                 ...
             },
-            "constraints": {
+            "constraints": [
                 "Relatively feasible to implement for my company",
-                "No traditional billboard ads",
-                ... 
-            },
+                "No traditional billboard ads"
+            ]
         }
 
         Now generate 30 different ideas that are extremely high quality and extremely wide range of ideas. Use the schema as a guide to generate the ideas; however, do not limit the scope of the ideas to the schem and use your best discernment to generate the ideas. The purpose and context should be regarded as more important than the criteria and constraints. ONLY RETURN THE IDEAS in the JSON format below, NO OTHER TEXT.:
@@ -172,11 +169,10 @@ export const prompts = {
                 "criteria3": "Highly profitable and profitable",
                 ...
             },
-            "constraints": {
+            "constraints": [
                 "Relatively feasible to implement for my company",
-                "No traditional billboard ads",
-                ... 
-            },
+                "No traditional billboard ads"
+            ]
         }
 
         This is the list of ideas and their descriptions:

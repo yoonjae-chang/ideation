@@ -56,6 +56,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
   const [schemaVersions, setSchemaVersions] = useState<any[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffsets, setDragOffsets] = useState<Record<string, PanelPosition>>({});
+  const [currentScale, setCurrentScale] = useState(1);
 
   // Ensure component only renders after client-side hydration
   useEffect(() => {
@@ -103,15 +104,21 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
     const initialPos = initialDragPositions[panelId];
     
     if (initialPos) {
+      // Scale the delta by the inverse of current scale to maintain consistent drag speed
+      const scaledDelta = {
+        x: delta.x / currentScale,
+        y: delta.y / currentScale
+      };
+      
       setPanelPositions(prev => ({
         ...prev,
         [panelId]: {
-          x: initialPos.x + delta.x,
-          y: initialPos.y + delta.y
+          x: initialPos.x + scaledDelta.x,
+          y: initialPos.y + scaledDelta.y
         }
       }));
     }
-  }, [initialDragPositions]);
+  }, [initialDragPositions, currentScale]);
 
   // Handle panel drag end
   const handleDragEnd = useCallback((event: DragEndEvent) => {
@@ -211,6 +218,10 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
           disabled: isDragging // Disable panning when dragging panels
         }}
         doubleClick={{ disabled: true }} // Prevent accidental double-click zoom
+        onTransformed={(ref, state) => {
+          // Update current scale for drag sensitivity adjustment
+          setCurrentScale(state.scale);
+        }}
       >
         {({ zoomIn, zoomOut, resetTransform }) => (
           <>

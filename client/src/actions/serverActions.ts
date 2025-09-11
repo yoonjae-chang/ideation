@@ -24,7 +24,7 @@ export type IdeaSchema = {
     purpose: string;
     context: string;
     criteria: Record<string, string>;
-    constraints: string[];
+    constraints: string[] | Record<string, string>;
 }
 
 // Helper function to call the chat completion model
@@ -32,7 +32,8 @@ async function callChatCompletion(
     systemPrompt: string,
     userPrompt: string,
     model: string = "gpt-4o-mini",
-    temperature: number = 1
+    temperature: number = 1,
+    expectArray: boolean = false
 ) {
     const supabase = await createClient();
 
@@ -44,26 +45,57 @@ async function callChatCompletion(
         throw new Error('User not found');
     }
 
+    console.log('Making chat completion request:', { model, temperature });
+
     for (let i = 0; i < 3; i++) {
-    const response = await supabase.functions.invoke('chatCompletionModel', {
-        body: {
-            systemPrompt,
-            userPrompt,
-            model,
-            temperature,
-        }
-    });
-
-    if (response.error) {
-        continue;
-    }
-
         try {
-            return JSON.parse(response.data.data);
-        } catch (parseError) {
+            const response = await supabase.functions.invoke('chatCompletionModel', {
+                body: {
+                    systemPrompt,
+                    userPrompt,
+                    model,
+                    temperature,
+                    expectArray,
+                }
+            });
+
+            console.log(`Attempt ${i + 1} response:`, {
+                error: response.error,
+                success: response.data?.success,
+                dataType: typeof response.data?.data,
+                dataLength: response.data?.data?.length
+            });
+
+            if (response.error) {
+                console.error(`Attempt ${i + 1} failed:`, response.error);
+                continue;
+            }
+
+            if (response.data?.success && response.data?.data) {
+                try {
+                    const parsed = JSON.parse(response.data.data);
+                    console.log(`Attempt ${i + 1} parsed successfully:`, {
+                        type: typeof parsed,
+                        isArray: Array.isArray(parsed),
+                        keys: typeof parsed === 'object' ? Object.keys(parsed) : 'not object'
+                    });
+                    return parsed;
+                } catch (parseError) {
+                    console.error(`Attempt ${i + 1} JSON parse failed:`, parseError);
+                    console.error('Raw data:', response.data.data);
+                    continue;
+                }
+            } else {
+                console.error(`Attempt ${i + 1} unsuccessful:`, response.data);
+                continue;
+            }
+        } catch (requestError) {
+            console.error(`Attempt ${i + 1} request failed:`, requestError);
             continue;
         }
     }
+    
+    throw new Error('Failed to get valid response after 3 attempts');
 }
 
 /**
@@ -81,7 +113,14 @@ export async function initialSchemaGeneration(
 
     const systemPrompt = prompts.initialSchemaGeneration.systemPrompt;
     
-    return await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1);
+    const result = await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1);
+    
+    // Validate the schema structure
+    if (result && typeof result === 'object' && result.purpose && result.context && result.criteria) {
+        return result as IdeaSchema;
+    }
+    
+    throw new Error('Invalid response format from schema generation');
 }
 
 /**
@@ -97,7 +136,14 @@ export async function refineSchemaBasedOnIdeaPreferences(
 
     const systemPrompt = prompts.refineSchemaBasedOnIdeaPreferences.systemPrompt;
     
-    return await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1);
+    const result = await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1);
+    
+    // Validate the schema structure
+    if (result && typeof result === 'object' && result.purpose && result.context && result.criteria) {
+        return result as IdeaSchema;
+    }
+    
+    throw new Error('Invalid response format from schema refinement');
 }
 
 /**
@@ -109,7 +155,19 @@ export async function ideaGeneration(schema: IdeaSchema): Promise<Idea[]> {
 
     const systemPrompt = prompts.ideaGeneration.systemPrompt;
     
-    return await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1.3);
+    const result = await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1.3, true);
+    
+    // Ensure we return an array of ideas
+    if (Array.isArray(result)) {
+        return result;
+    }
+    
+    // If result is not an array, try to extract ideas from it
+    if (result && typeof result === 'object' && result.ideas) {
+        return result.ideas;
+    }
+    
+    throw new Error('Invalid response format from idea generation');
 }
 
 /**
@@ -125,7 +183,19 @@ export async function ideaEvaluation(
 
     const systemPrompt = prompts.ideaEvaluation.systemPrompt;
     
-    return await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1);
+    const result = await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1, true);
+    
+    // Ensure we return an array of evaluated ideas
+    if (Array.isArray(result)) {
+        return result;
+    }
+    
+    // If result is not an array, try to extract ideas from it
+    if (result && typeof result === 'object' && result.ideas) {
+        return result.ideas;
+    }
+    
+    throw new Error('Invalid response format from idea evaluation');
 }
 
 // Database persistence functions

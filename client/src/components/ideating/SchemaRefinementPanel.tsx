@@ -119,20 +119,54 @@ export default function SchemaRefinementPanel({
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-3">
-            {ideas.map((idea, index) => {
-              const ideaKey = `idea-${index}`;
-              const ranking = rankings[ideaKey] || 0;
-              
-              if (ranking >= 8) {
-                return (
-                  <Badge key={index} className="bg-green-100 text-green-800 text-xs">
-                    {idea.idea.slice(0, 30)}... ({ranking}/10)
-                  </Badge>
-                );
-              }
-              return null;
-            })}
+          <div className="space-y-3 mt-3">
+            <div className="text-sm font-medium text-gray-700">All Ranked Ideas:</div>
+            <div className="flex flex-wrap gap-2">
+              {ideas.map((idea, index) => {
+                const ideaKey = `idea-${index}`;
+                const ranking = rankings[ideaKey] || 0;
+                
+                if (ranking > 0) {
+                  const getBadgeColor = (rank: number) => {
+                    if (rank >= 8) return "bg-green-100 text-green-800";
+                    if (rank >= 6) return "bg-blue-100 text-blue-800";
+                    if (rank >= 4) return "bg-yellow-100 text-yellow-800";
+                    return "bg-gray-100 text-gray-800";
+                  };
+
+                  return (
+                    <Badge key={index} className={`${getBadgeColor(ranking)} text-xs`}>
+                      {idea.idea.slice(0, 30)}... ({ranking}/10)
+                    </Badge>
+                  );
+                }
+                return null;
+              })}
+            </div>
+            
+            {/* Show high-rated ideas separately */}
+            <div className="text-sm font-medium text-green-700 mt-4">Top Rated Ideas (8+):</div>
+            <div className="flex flex-wrap gap-2">
+              {ideas.map((idea, index) => {
+                const ideaKey = `idea-${index}`;
+                const ranking = rankings[ideaKey] || 0;
+                
+                if (ranking >= 8) {
+                  return (
+                    <Badge key={index} className="bg-green-100 text-green-800 text-xs font-medium">
+                      ⭐ {idea.idea.slice(0, 35)}... ({ranking}/10)
+                    </Badge>
+                  );
+                }
+                return null;
+              })}
+              {ideas.filter((_, index) => {
+                const ideaKey = `idea-${index}`;
+                return rankings[ideaKey] >= 8;
+              }).length === 0 && (
+                <div className="text-sm text-gray-500 italic">No ideas rated 8 or higher</div>
+              )}
+            </div>
           </div>
         </div>
       </Card>
@@ -201,11 +235,19 @@ export default function SchemaRefinementPanel({
                 <div>
                   <div className="font-medium text-gray-600">Constraints:</div>
                   <div className="space-y-1 mt-1">
-                    {schema.constraints.map((constraint, index) => (
-                      <div key={index} className="text-gray-500">
-                        • {constraint.slice(0, 40)}...
-                      </div>
-                    ))}
+                    {Array.isArray(schema.constraints) ? (
+                      schema.constraints.map((constraint, index) => (
+                        <div key={index} className="text-gray-500">
+                          • {constraint.slice(0, 40)}...
+                        </div>
+                      ))
+                    ) : (
+                      Object.entries(schema.constraints).map(([key, value], index) => (
+                        <div key={index} className="text-gray-500">
+                          • <span className="font-medium">{key}:</span> {value.slice(0, 40)}...
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
@@ -231,10 +273,18 @@ export default function SchemaRefinementPanel({
                 <div>
                   <div className="font-medium text-green-600">Constraints:</div>
                   <div className="space-y-1 mt-1">
-                    {refinedSchema && refinedSchema.constraints.map((constraint, index) => (
-                      <div key={index} className="text-green-700">
-                        • {constraint.slice(0, 40)}...
-                      </div>
+                    {refinedSchema && (Array.isArray(refinedSchema.constraints) ? (
+                      refinedSchema.constraints.map((constraint, index) => (
+                        <div key={index} className="text-green-700">
+                          • {constraint.slice(0, 40)}...
+                        </div>
+                      ))
+                    ) : (
+                      Object.entries(refinedSchema.constraints).map(([key, value], index) => (
+                        <div key={index} className="text-green-700">
+                          • <span className="font-medium">{key}:</span> {value.slice(0, 40)}...
+                        </div>
+                      ))
                     ))}
                   </div>
                 </div>

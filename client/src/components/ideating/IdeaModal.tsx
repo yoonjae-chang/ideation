@@ -14,43 +14,44 @@ interface IdeaModalProps {
 export default function IdeaModal({
     isOpen,
     onClose,
-}: IdeaModalProps) {
+  }: IdeaModalProps) {
     const [input, setInput] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [lastSubmitTime, setLastSubmitTime] = useState(0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { messages, sendMessage } = useChat();
 
     // Close on ESC key
     useEffect(() => {
-        const handleEsc = (event: KeyboardEvent) => {
-            if (event.key === "Escape") onClose();
-        };
-        document.addEventListener("keydown", handleEsc);
-        return () => document.removeEventListener("keydown", handleEsc);
+      const handleEsc = (event: KeyboardEvent) => {
+        if (event.key === "Escape") onClose();
+      };
+      document.addEventListener("keydown", handleEsc);
+      return () => document.removeEventListener("keydown", handleEsc);
     }, [onClose]);
-
+  
     useEffect(() => {
-        if (isOpen) {
-            // Lock scroll
-            document.body.style.overflow = "hidden";
-        } else {
-            // Unlock scroll
-            document.body.style.overflow = "";
-        }
-
-        // Cleanup on unmount
-        return () => {
-            document.body.style.overflow = "";
-        };
-    }, [isOpen]);
-
+    if (isOpen) {
+      // Lock scroll
+      document.body.style.overflow = "hidden";
+    } else {
+      // Unlock scroll
+      document.body.style.overflow = "";
+    }
+  
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+  
     if (!isOpen) return null;
-
+  
     return (
-        <div
+      <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
             onClick={onClose}
-        >
-            <div
+      >
+        <div
                 className="bg-card border-2 border-accent rounded-xl shadow-2xl max-h-[85vh] w-full max-w-4xl transform transition-all duration-300 scale-100 opacity-100 flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -59,12 +60,12 @@ export default function IdeaModal({
                     <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/80 rounded-lg flex items-center justify-center">
                             <Bot className="w-6 h-6 text-primary-foreground" />
-                        </div>
+          </div>
                         <div>
                             <h2 className="text-xl font-bold text-foreground">AI Ideation Assistant</h2>
                             <p className="text-sm text-sub-foreground">Let's prototype and generate amazing ideas together</p>
-                        </div>
-                    </div>
+              </div>
+            </div>
                     <Button
                         onClick={onClose}
                         variant="ghost"
@@ -73,8 +74,8 @@ export default function IdeaModal({
                     >
                         <X className="w-4 h-4" />
                     </Button>
-                </div>
-
+            </div>
+            
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0">
                     {messages.length === 0 ? (
@@ -88,8 +89,8 @@ export default function IdeaModal({
                                     I'm here to help you generate, refine, and prototype amazing ideas. 
                                     Tell me about your project, goals, or what you'd like to create!
                                 </p>
-                            </div>
-                        </div>
+                </div>
+              </div>
                     ) : (
                         messages.map((message) => (
                             <div
@@ -107,8 +108,8 @@ export default function IdeaModal({
                                         <User className="w-4 h-4" />
                                     ) : (
                                         <Bot className="w-4 h-4" />
-                                    )}
-                                </div>
+                      )}
+                    </div>
                                 <div className={`flex-1 max-w-[80%] ${
                                     message.role === 'user' ? 'text-right' : 'text-left'
                                 }`}>
@@ -132,31 +133,47 @@ export default function IdeaModal({
                             </div>
                         ))
                     )}
-                    {isLoading && (
+                    {isSubmitting && (
                         <div className="flex items-start space-x-3">
                             <div className="w-8 h-8 bg-gradient-to-br from-accent to-accent/80 rounded-full flex items-center justify-center">
                                 <Bot className="w-4 h-4 text-primary-foreground" />
-                            </div>
+                  </div>
                             <div className="bg-muted border border-border p-3 rounded-lg">
                                 <div className="flex space-x-1">
                                     <div className="w-2 h-2 bg-sub-foreground rounded-full animate-bounce"></div>
                                     <div className="w-2 h-2 bg-sub-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                                     <div className="w-2 h-2 bg-sub-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                </div>
-                            </div>
-                        </div>
+              </div>
+            </div>
+          </div>
                     )}
                 </div>
 
                 {/* Input Form */}
                 <div className="border-t border-border p-6">
-                    <form onSubmit={(e) => {
+                    <form onSubmit={async (e) => {
                         e.preventDefault();
-                        if (input.trim()) {
-                            setIsLoading(true);
-                            sendMessage({ text: input });
-                            setInput('');
-                            setIsLoading(false);
+                        
+                        const now = Date.now();
+                        const timeSinceLastSubmit = now - lastSubmitTime;
+                        
+                        // Prevent double submissions (debounce with 1 second)
+                        if (timeSinceLastSubmit < 1000) {
+                            return;
+                        }
+                        
+                        if (input.trim() && !isSubmitting) {
+                            setLastSubmitTime(now);
+                            setIsSubmitting(true);
+                            const messageText = input.trim();
+                            setInput(''); // Clear input immediately
+                            
+                            try {
+                                sendMessage({ text: messageText });
+                            } finally {
+                                // Reset submitting state after a short delay
+                                setTimeout(() => setIsSubmitting(false), 2000);
+                            }
                         }
                     }} className="flex space-x-3">
                         <Input
@@ -164,22 +181,22 @@ export default function IdeaModal({
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Describe your idea, ask for suggestions, or request help with prototyping..."
                             className="flex-1 border-2 border-accent/40 focus:border-accent"
-                            disabled={isLoading}
+                            disabled={isSubmitting}
                         />
-                        <Button
+            <Button
                             type="submit"
-                            disabled={isLoading || !input.trim()}
+                            disabled={isSubmitting || !input.trim()}
                             className="px-4 py-2 bg-accent hover:bg-accent/90 text-primary-foreground"
-                        >
+            >
                             <Send className="w-4 h-4" />
-                        </Button>
+            </Button>
                     </form>
                     <p className="text-xs text-sub-foreground mt-2 text-center">
                         Press Enter to send • ESC to close
                     </p>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     );
-}
+  }
   
