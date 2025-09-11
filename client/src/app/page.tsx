@@ -4,13 +4,20 @@ import { presets } from "@/app/data/constants";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 export default function Home() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const handleClick = (preset: any) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('template', preset.id);
+    router.push(`/ideating?${params.toString()}`);
+  };
+
+
   return (
     <div className="md:pb-16 pb-7">
-      <section className="py-12 px-4 sm:px-6 lg:px-8 mb-20">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 min-h-[50vh] max-w-5xl mx-auto text-center">
           <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6 md:py-15 py-10">
             Prototyping <span className="text-accent">Ideas</span> Into Reality 
             <div className="text-purple-500 md:mt-4 mt-2">At The Speed Of Light</div>
@@ -20,7 +27,7 @@ export default function Home() {
             and helps you discover breakthrough solutions.
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="md:mt-10 mt-5 flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               onClick={() => {router.push('/ideating');}}
               disabled={false}
@@ -38,10 +45,9 @@ export default function Home() {
               How It Works
             </Button>
           </div>
-        </div>
       </section>
 
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-card">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h3 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
@@ -54,7 +60,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {presets.map((preset) => (
-              <Card key={preset.id} className="card-hover group cursor-pointer flex flex-col h-full" onClick={() => {}}>
+              <Card key={preset.id} className="card-hover group flex flex-col h-full" >
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-accent/10 text-accent group-hover:bg-accent/20 transition-colors">
@@ -76,7 +82,7 @@ export default function Home() {
                   </div>
                   <Button 
                     className="w-full group-hover:bg-accent/90 transition-colors mt-4"
-                    disabled={false}
+                    onClick={() => {handleClick(preset);}}
                   >
                     Use This Template
                     <ArrowRight className="ml-2 h-4 w-4" />

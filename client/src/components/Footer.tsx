@@ -8,6 +8,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="flex-1 max-w-md">
             <div className="flex items-center space-x-3 mb-4">
+
               <span className="text-foreground font-bold text-2xl">Prototyping Ideas</span>
             </div>
             <p className="text-sub-foreground text-base leading-relaxed">
@@ -39,6 +40,9 @@ const Footer = () => {
         <div className="border-t border-border/50 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-sub-foreground text-sm">
             © {new Date().getFullYear()} Prototyping Ideas. All rights reserved.
+          </div>
+          <div className="text-sub-foreground text-sm">
+            Built for Innovators
           </div>
         </div>
       </div>
