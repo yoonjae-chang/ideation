@@ -13,13 +13,6 @@ export const presets = [
         tone: 'innovative and ambitious',
         constraints: 'market-viable and fundable'
       },
-      criteria: {
-        impact: 0.3,
-        feasibility: 0.2,
-        novelty: 0.25,
-        alignment: 0.15,
-        effort: 0.1
-      }
     },
     {
       id: 'product-feature',
@@ -33,13 +26,7 @@ export const presets = [
         tone: 'user-focused and practical',
         constraints: 'technically feasible and user-friendly'
       },
-      criteria: {
-        impact: 0.25,
-        feasibility: 0.3,
-        novelty: 0.15,
-        alignment: 0.25,
-        effort: 0.05
-      }
+      
     },
     {
       id: 'marketing-campaign',
@@ -53,13 +40,7 @@ export const presets = [
         tone: 'creative and compelling',
         constraints: 'budget-conscious and measurable'
       },
-      criteria: {
-        impact: 0.35,
-        feasibility: 0.15,
-        novelty: 0.2,
-        alignment: 0.2,
-        effort: 0.1
-      }
+      
     },
     {
       id: 'process-improvement',
@@ -73,13 +54,7 @@ export const presets = [
         tone: 'practical and results-oriented',
         constraints: 'cost-effective and implementable'
       },
-      criteria: {
-        impact: 0.2,
-        feasibility: 0.35,
-        novelty: 0.1,
-        alignment: 0.25,
-        effort: 0.1
-      }
+      
     },
     {
       id: 'team-building',
@@ -93,13 +68,7 @@ export const presets = [
         tone: 'engaging and inclusive',
         constraints: 'budget-friendly and accessible'
       },
-      criteria: {
-        impact: 0.25,
-        feasibility: 0.25,
-        novelty: 0.15,
-        alignment: 0.25,
-        effort: 0.1
-      }
+      
     }
   ];
   

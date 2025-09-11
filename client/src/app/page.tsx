@@ -4,57 +4,57 @@ import { presets } from "@/app/data/constants";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-
+import { useRouter } from "next/navigation";
 export default function Home() {
+  const router = useRouter();
   return (
-    <div>
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
+    <div className="md:pb-16 pb-7">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 mb-20">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
-            Transform Your <span className="text-accent">Purpose</span> Into 
-            <br />
-            <span className="text-accent">50+ Actionable Ideas</span>
-          </h2>
-          <p className="text-xl text-sub-foreground mb-8 max-w-2xl mx-auto">
-            AI-powered ideation that learns your preferences, scores ideas intelligently, 
+          <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6 md:py-15 py-10">
+            Prototyping <span className="text-accent">Ideas</span> Into Reality 
+            <div className="text-purple-500 md:mt-4 mt-2">At The Speed Of Light</div>
+          </div>
+          <div className="text-[22px] text-sub-foreground mb-8 max-w-2xl mx-auto">
+            AI-powered ideation and prototyping that learns your preferences, takes account of your preferences and context,
             and helps you discover breakthrough solutions.
-          </p>
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              onClick={() => {}}
+              onClick={() => {router.push('/ideating');}}
               disabled={false}
-              className="text-lg px-8 py-6"
+              className="text-lg px-8 py-6 "
             >
-              Start Fresh Ideation
+              Start Idea Generation
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             
             <Button
               variant="outline"
-              onClick={() => {}}
-              className="text-lg px-8 py-6"
+              onClick={() => {document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });}}
+              className="text-lg px-8 py-6 border-gray-300"
             >
-              View Past Runs
+              How It Works
             </Button>
           </div>
         </div>
       </section>
 
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-card/30">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-card">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-foreground mb-4">
+            <h3 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
               Quick Start Templates
             </h3>
-            <p className="text-lg text-sub-foreground max-w-2xl mx-auto">
-              Jump-start your ideation with pre-configured templates optimized for common scenarios.
+            <p className="md:text-[20px] text-sub-foreground max-w-2xl mx-auto">
+              Jump-start your ideation and prototyping with pre-configured templates optimized for common scenarios.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {presets.map((preset) => (
-              <Card key={preset.id} className="card-hover group cursor-pointer" onClick={() => {}}>
+              <Card key={preset.id} className="card-hover group cursor-pointer flex flex-col h-full" onClick={() => {}}>
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-accent/10 text-accent group-hover:bg-accent/20 transition-colors">
@@ -66,29 +66,16 @@ export default function Home() {
                     {preset.description}
                   </p>
                 </CardHeader>
-                
-                <CardContent>
-                  <div className="space-y-3">
+               
+                <CardContent className="flex flex-col flex-1">
+                  <div className="space-y-3 flex-1">
                     <div>
                       <p className="text-sm font-medium text-foreground mb-1">Purpose:</p>
                       <p className="text-xs text-sub-foreground">{preset.purpose}</p>
                     </div>
-                    
-                    <div>
-                      <p className="text-sm font-medium text-foreground mb-2">Criteria Weights:</p>
-                      <div className="grid grid-cols-2 gap-1 text-xs">
-                        {Object.entries(preset.criteria).map(([key, value]) => (
-                          <div key={key} className="flex justify-between">
-                            <span className="text-sub-foreground capitalize">{key}:</span>
-                            <span className="text-accent font-medium">{Math.round(value * 100)}%</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
-                  
                   <Button 
-                    className="w-full mt-4 group-hover:bg-accent/90 transition-colors"
+                    className="w-full group-hover:bg-accent/90 transition-colors mt-4"
                     disabled={false}
                   >
                     Use This Template
@@ -101,41 +88,43 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-2xl font-bold text-foreground mb-8">
+      <section id="how-it-works" className="md:py-22 py-12 px-4 sm:px-20 lg:px-8">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="text-2xl md:text-5xl font-bold text-foreground mb-4">
             How It Works
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          </div>
+          <div className="mt-6 max-w-3xl mx-auto text-sub-foreground md:text-xl text-base ">
+            Our AI-powered ideation and prototyping platform helps you generate and refine ideas quickly and efficiently by taking account of your preferences and context.
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-8">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto">
-                <span className="text-accent font-bold">1</span>
+                <span className="text-purple-500 text-xl font-bold">1</span>
               </div>
-              <h4 className="text-lg font-semibold text-foreground">Define Purpose</h4>
-              <p className="text-sm text-sub-foreground">
-                Start with your goal and context. Our AI understands what you're trying to achieve.
+              <h4 className="md:text-xl text-lg font-semibold text-foreground">Define Purpose and Context</h4>
+              <p className="text-sm md:text-[17px] text-sub-foreground">
+                Start with your goal and context. Tell us as much as you can about what you're trying to achieve and set your criteria for our AI.
               </p>
             </div>
             
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto">
-                <span className="text-accent font-bold">2</span>
+                <span className="text-purple-500 text-xl font-bold">2</span>
               </div>
-              <h4 className="text-lg font-semibold text-foreground">AI Generation</h4>
-              <p className="text-sm text-sub-foreground">
-                Get 50+ diverse, scored ideas tailored to your criteria and context.
-              </p>
+              <h4 className="md:text-xl text-lg font-semibold text-foreground">AI Ideation and Prototyping</h4>
+              <div className="text-sm md:text-[17px] text-sub-foreground">
+                Get X amount of diverse, scored ideas tailored to your criteria and context. We'll use your preferences to refine the ideas.
+              </div>
             </div>
             
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto">
-                <span className="text-accent font-bold">3</span>
+                <span className="text-purple-500 text-xl font-bold">3</span>
               </div>
-              <h4 className="text-lg font-semibold text-foreground">Learn & Refine</h4>
-              <p className="text-sm text-sub-foreground">
-                Rank ideas to teach our AI your preferences for even better future suggestions.
-              </p>
+              <h4 className="md:text-xl text-lg font-semibold text-foreground">Refine and Iterate</h4>
+              <div className="text-sm md:text-[17px] text-sub-foreground">
+                Rank ideas to teach our AI your preferences for even better future suggestions. Dive deep into the ideas and refine them to your liking.
+              </div>
             </div>
           </div>
         </div>

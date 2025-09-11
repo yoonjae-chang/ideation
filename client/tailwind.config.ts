@@ -15,7 +15,7 @@ export default {
         background: '#0B0C10',
         card: '#111418',
         foreground: '#EAECEE',
-        'sub-foreground': '#AAB2BD',
+        'sub-foreground': 'text-gray-300',
         accent: '#7C5CFF',
         
         // Standard colors for compatibility
