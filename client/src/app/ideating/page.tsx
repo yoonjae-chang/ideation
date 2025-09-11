@@ -1,11 +1,7 @@
 'use client';
 
+import IdeationCanvas from '@/components/ideating/IdeationCanvas';
 
 export default function Ideating() {
-  return (
-   <div>
-    <h1>Ideating</h1>
-   </div>
-
-);
+  return <IdeationCanvas />;
 }
