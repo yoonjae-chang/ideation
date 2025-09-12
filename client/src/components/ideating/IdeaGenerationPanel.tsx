@@ -73,36 +73,29 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
       className="w-[600px] space-y-6"
     >
       <div className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="flex items-center justify-center gap-2">
           <Lightbulb className="w-5 h-5 text-blue-500" />
           <h2 className="text-xl font-semibold text-gray-900">Generate Ideas</h2>
         </div>
-        <p className="text-sm text-gray-600">
-          AI will create 30 ideas and evaluate the top 10 based on your schema
+        <p className="text-md text-gray-600">
+          AI will create 50 ideas and evaluate the top 10 based on your ideation plan
         </p>
       </div>
 
       {/* Schema Summary */}
       <Card className="p-4 bg-blue-50 border-blue-200">
         <div className="space-y-2">
-          <h3 className="font-medium text-blue-900">Using Schema:</h3>
-          <div className="text-sm text-blue-800">
+          <h3 className="font-medium text-blue-900">Using Ideation Plan:</h3>
+          <div className="text-sm gap-1 text-blue-800">
             <p><strong>Purpose:</strong> {schema.purpose}</p>
-            <div className="mt-2">
-              <strong>Key Criteria:</strong>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {Object.keys(schema.criteria).slice(0, 3).map(key => (
-                  <Badge key={key} variant="secondary" className="text-xs">
-                    {key}
-                  </Badge>
-                ))}
-                {Object.keys(schema.criteria).length > 3 && (
-                  <Badge variant="secondary" className="text-xs">
-                    +{Object.keys(schema.criteria).length - 3} more
-                  </Badge>
-                )}
+            <p><strong>Context:</strong> {schema.context}</p>
+              <div className="whitespace-pre-line">
+                <strong>Criteria:</strong> 
+                <br />{schema.criteria.map((criteria) => (`- ${criteria}`)).join('\n')}
+                <br />
+                <strong>Constraints:</strong> 
+                <br />{schema.constraints.map((constraint) => (`- ${constraint}`)).join('\n')}
               </div>
-            </div>
           </div>
         </div>
       </Card>
@@ -137,9 +130,9 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
           >
             <div className="flex items-center justify-center gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
-              <span className="text-lg font-medium">Generating Ideas...</span>
+              <span className="text-lg text-blue-900 font-medium">Generating Ideas...</span>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-md text-gray-600">
               Creating 30 unique ideas based on your schema
             </p>
             <div className="w-full bg-gray-200 rounded-full h-2">

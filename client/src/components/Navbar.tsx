@@ -10,7 +10,7 @@ export default function Navbar() {
     <Link href={"/"}>Prototyping Ideas</Link>
     {/* <Image src="@/public/logo/favicon.svg" alt="Prototyping Ideas" width={24} height={24} /> */}
     <div className="flex items-center gap-2">
-
+      
     </div>
   </div>
    <AuthButton />

@@ -11,6 +11,7 @@ export type Idea = {
 
 export type IdeaWithEvaluation = {
     idea: string;
+    description: string;
     evaluation: string;
 }
 
@@ -23,8 +24,8 @@ export type IdeaRanking = {
 export type IdeaSchema = {
     purpose: string;
     context: string;
-    criteria: Record<string, string>;
-    constraints: string[] | Record<string, string>;
+    criteria: string[];
+    constraints: string[];
 }
 
 // Helper function to call the chat completion model

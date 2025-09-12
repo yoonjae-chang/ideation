@@ -85,69 +85,88 @@ export default function ContextInputPanel({ onComplete, sessionData }: ContextIn
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-96 space-y-6"
+      className="w-96 space-y-6 "
     >
       <div className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="flex items-center justify-center gap-2">
           <Sparkles className="w-5 h-5 text-blue-500" />
-          <h2 className="text-xl font-semibold text-gray-900">Start Your Ideation</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Start Your Brainstorming</h2>
         </div>
-        <p className="text-sm text-gray-600">
-          Provide context and goals to generate a personalized ideation schema
+        <p className="text-md text-gray-600">
+          Provide context and goals to generate personalized ideation 
         </p>
       </div>
 
       <div className="space-y-4">
         {/* Context Input */}
         <div className="space-y-2">
-          <Label htmlFor="context" className="text-sm font-medium">
+          <Label htmlFor="context" className="text-md font-medium text-black">
             Context
           </Label>
           <Textarea
             id="context"
             placeholder="Describe the situation, problem, or domain you're working in..."
             value={formData.context}
-            onChange={(e) => handleInputChange('context', e.target.value)}
-            className={`min-h-[80px] ${errors.context ? 'border-red-300' : ''}`}
+            onChange={(e) => {
+              const el = e.target as HTMLTextAreaElement;
+              handleInputChange('context', el.value);
+              
+              // auto-grow
+              el.style.height = "auto";
+              el.style.height = el.scrollHeight + "px";
+            }}
+            className={`min-h-[80px] border-2 border-accent placeholder:text-gray-600 text-black bg-blue-50  resize-none overflow-hidden ${errors.context ? 'border-red-300' : ''}`}
           />
           {errors.context && (
-            <p className="text-xs text-red-600">{errors.context}</p>
+            <p className="text-sm text-red-600">{errors.context}</p>
           )}
         </div>
 
         {/* Purpose Input */}
         <div className="space-y-2">
-          <Label htmlFor="purpose" className="text-sm font-medium">
+          <Label htmlFor="purpose" className="text-md font-medium text-black">
             Purpose
           </Label>
           <Textarea
             id="purpose"
             placeholder="What specific goal or outcome are you trying to achieve?"
             value={formData.purpose}
-            onChange={(e) => handleInputChange('purpose', e.target.value)}
-            className={`min-h-[80px] ${errors.purpose ? 'border-red-300' : ''}`}
+            onChange={(e) => {
+              const el = e.target as HTMLTextAreaElement;
+              handleInputChange('purpose', el.value);
+              
+              // auto-grow
+              el.style.height = "auto";
+              el.style.height = el.scrollHeight + "px";
+            }}
+            className={`min-h-[80px] border-2 border-accent placeholder:text-gray-600 text-black bg-blue-50 resize-none overflow-hidden ${errors.purpose ? 'border-red-300' : ''}`}
           />
           {errors.purpose && (
-            <p className="text-xs text-red-600">{errors.purpose}</p>
+            <p className="text-sm text-red-600">{errors.purpose}</p>
           )}
         </div>
 
         {/* Preferences Input */}
         <div className="space-y-2">
-          <Label htmlFor="preferences" className="text-sm font-medium">
+          <Label htmlFor="preferences" className="text-md font-medium text-black">
             Preferences & Criteria
           </Label>
           <Textarea
             id="preferences"
             placeholder="What qualities should successful ideas have? Any constraints or requirements?"
             value={formData.preferences}
-            onChange={(e) => handleInputChange('preferences', e.target.value)}
-            className={`min-h-[80px] ${errors.preferences ? 'border-red-300' : ''}`}
+            onChange={(e) => {
+              const el = e.target as HTMLTextAreaElement;
+              handleInputChange('preferences', el.value);
+              
+              // auto-grow
+              el.style.height = "auto";
+              el.style.height = el.scrollHeight + "px";
+            }}
+            className={`min-h-[80px] border-2 border-accent placeholder:text-gray-600 text-black bg-blue-50 resize-none overflow-hidden ${errors.preferences ? 'border-red-300' : ''}`}
           />
           {errors.preferences && (
-            <p className="text-xs text-red-600">{errors.preferences}</p>
+            <p className="text-sm text-red-600">{errors.preferences}</p>
           )}
         </div>
       </div>
@@ -163,25 +182,19 @@ export default function ContextInputPanel({ onComplete, sessionData }: ContextIn
       <Button
         onClick={handleGenerateSchema}
         disabled={isGenerating}
-        className="w-full"
+        className="w-full text-[15px]"
         size="lg"
       >
         {isGenerating ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Generating Schema...
+            Generating Ideation Plan...
           </>
         ) : (
-          <>
-            <Sparkles className="w-4 h-4 mr-2" />
-            Generate Initial Schema
-          </>
+            "Generate Initial Ideation Plan..."
         )}
       </Button>
 
-      <div className="text-xs text-gray-500 text-center">
-        This will create a personalized schema for generating high-quality ideas
-      </div>
     </motion.div>
   );
 }

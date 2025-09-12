@@ -72,10 +72,9 @@ export default function SchemaRefinementPanel({
   const rankingInsights = () => {
     const rankingValues = Object.values(rankings).filter(r => r > 0);
     const avgRanking = rankingValues.reduce((sum, r) => sum + r, 0) / rankingValues.length;
-    const highRanked = rankingValues.filter(r => r >= 8).length;
-    const lowRanked = rankingValues.filter(r => r <= 4).length;
+    const highRanked = rankingValues.filter(r => r >= 5).length;
 
-    return { avgRanking, highRanked, lowRanked, total: rankingValues.length };
+    return { avgRanking, highRanked, total: rankingValues.length };
   };
 
   const insights = rankingInsights();
@@ -87,20 +86,19 @@ export default function SchemaRefinementPanel({
       className="w-[600px] space-y-6"
     >
       <div className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="flex items-center justify-center gap-2">
           <RefreshCw className="w-5 h-5 text-blue-500" />
           <h2 className="text-xl font-semibold text-gray-900">Refine Schema</h2>
         </div>
-        <p className="text-sm text-gray-600">
+        <p className="text-md text-gray-600">
           Use your idea rankings to improve the schema for better future results
         </p>
       </div>
 
       {/* Ranking Insights */}
-      <Card className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+      <Card className="p-4 bg-blue-50 border-accent border-2">
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
             <h3 className="font-semibold text-blue-900">Your Ranking Insights</h3>
           </div>
           
@@ -115,7 +113,7 @@ export default function SchemaRefinementPanel({
               <div className="text-2xl font-bold text-green-600">
                 {insights.highRanked}
               </div>
-              <div className="text-sm text-green-700">High Rated (8+)</div>
+              <div className="text-sm text-green-700">High Rated (5 stars)</div>
             </div>
           </div>
 
@@ -128,15 +126,15 @@ export default function SchemaRefinementPanel({
                 
                 if (ranking > 0) {
                   const getBadgeColor = (rank: number) => {
-                    if (rank >= 8) return "bg-green-100 text-green-800";
-                    if (rank >= 6) return "bg-blue-100 text-blue-800";
-                    if (rank >= 4) return "bg-yellow-100 text-yellow-800";
+                    if (rank >= 5) return "bg-green-100 text-green-800";
+                    if (rank >= 4) return "bg-blue-100 text-blue-800";
+                    if (rank >= 2) return "bg-yellow-100 text-yellow-800";
                     return "bg-gray-100 text-gray-800";
                   };
 
                   return (
                     <Badge key={index} className={`${getBadgeColor(ranking)} text-xs`}>
-                      {idea.idea.slice(0, 30)}... ({ranking}/10)
+                      {idea.idea.slice(0, 30)}... ({ranking}/5)
                     </Badge>
                   );
                 }
@@ -145,16 +143,16 @@ export default function SchemaRefinementPanel({
             </div>
             
             {/* Show high-rated ideas separately */}
-            <div className="text-sm font-medium text-green-700 mt-4">Top Rated Ideas (8+):</div>
+            <div className="text-sm font-medium text-green-700 mt-4">Top Rated Ideas (5 stars):</div>
             <div className="flex flex-wrap gap-2">
               {ideas.map((idea, index) => {
                 const ideaKey = `idea-${index}`;
                 const ranking = rankings[ideaKey] || 0;
                 
-                if (ranking >= 8) {
+                if (ranking >= 5) {
                   return (
                     <Badge key={index} className="bg-green-100 text-green-800 text-xs font-medium">
-                      ⭐ {idea.idea.slice(0, 35)}... ({ranking}/10)
+                      ⭐ {idea.idea.slice(0, 35)}... ({ranking}/5)
                     </Badge>
                   );
                 }
@@ -162,9 +160,9 @@ export default function SchemaRefinementPanel({
               })}
               {ideas.filter((_, index) => {
                 const ideaKey = `idea-${index}`;
-                return rankings[ideaKey] >= 8;
+                return rankings[ideaKey] >= 5;
               }).length === 0 && (
-                <div className="text-sm text-gray-500 italic">No ideas rated 8 or higher</div>
+                <div className="text-sm text-gray-500 italic">No ideas rated 5 or higher</div>
               )}
             </div>
           </div>
@@ -198,56 +196,46 @@ export default function SchemaRefinementPanel({
               <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
-
-          <div className="text-xs text-gray-500 text-center">
-            AI will analyze your highly-ranked ideas to improve the schema
-          </div>
         </div>
       ) : (
         /* Schema Comparison */
-        <div className="space-y-6">
+        <div className="space-y-3">
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-green-700 mb-2">
+            <h3 className="text-xl font-semibold text-green-700">
               ✨ Schema Refined!
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-md text-gray-600">
               Compare the original and refined schemas below
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Original Schema */}
-            <Card className="p-4">
-              <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <Card className="p-4 bg-red-50 border-red-400">
+              <h4 className="font-semibold text-lg text-red-700 mb-3 flex items-center gap-2">
                 Original Schema
               </h4>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-md">
                 <div>
-                  <div className="font-medium text-gray-600">Criteria:</div>
-                  <div className="space-y-1 mt-1">
-                    {Object.entries(schema.criteria).map(([key, value]) => (
-                      <div key={key} className="text-gray-500">
-                        <span className="font-medium">{key}:</span> {value.slice(0, 50)}...
+                  <div className="font-medium text-lg text-red-600">Criteria:</div>
+                  <div className="space-y-1 mt-1 ">
+                    {schema.criteria.map((criteria, index) => (
+                      <div key={index} className="text-red-400">
+                        • {criteria}
                       </div>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <div className="font-medium text-gray-600">Constraints:</div>
+                  <div className="font-medium text-lg text-red-600">Constraints:</div>
                   <div className="space-y-1 mt-1">
-                    {Array.isArray(schema.constraints) ? (
+                    {
                       schema.constraints.map((constraint, index) => (
-                        <div key={index} className="text-gray-500">
-                          • {constraint.slice(0, 40)}...
+                        <div key={index} className="text-red-400">
+                          • {constraint}
                         </div>
                       ))
-                    ) : (
-                      Object.entries(schema.constraints).map(([key, value], index) => (
-                        <div key={index} className="text-gray-500">
-                          • <span className="font-medium">{key}:</span> {value.slice(0, 40)}...
-                        </div>
-                      ))
-                    )}
+                    }
                   </div>
                 </div>
               </div>
@@ -255,37 +243,31 @@ export default function SchemaRefinementPanel({
 
             {/* Refined Schema */}
             <Card className="p-4 border-green-200 bg-green-50">
-              <h4 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+              <h4 className="font-semibold text-lg text-green-700 flex items-center gap-2 mb-3">
                 <ArrowRight className="w-4 h-4" />
                 Refined Schema
               </h4>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-md">
                 <div>
-                  <div className="font-medium text-green-600">Criteria:</div>
+                  <div className="font-medium text-lg text-green-600">Criteria:</div>
                   <div className="space-y-1 mt-1">
-                    {refinedSchema && Object.entries(refinedSchema.criteria).map(([key, value]) => (
-                      <div key={key} className="text-green-700">
-                        <span className="font-medium">{key}:</span> {value.slice(0, 50)}...
+                    {refinedSchema && refinedSchema.criteria.map((criteria, index) => (
+                      <div key={index} className="text-green-700">
+                        • {criteria}
                       </div>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <div className="font-medium text-green-600">Constraints:</div>
+                  <div className="font-medium text-lg text-green-600">Constraints:</div>
                   <div className="space-y-1 mt-1">
-                    {refinedSchema && (Array.isArray(refinedSchema.constraints) ? (
+                    {refinedSchema && (
                       refinedSchema.constraints.map((constraint, index) => (
                         <div key={index} className="text-green-700">
-                          • {constraint.slice(0, 40)}...
+                          • {constraint}
                         </div>
                       ))
-                    ) : (
-                      Object.entries(refinedSchema.constraints).map(([key, value], index) => (
-                        <div key={index} className="text-green-700">
-                          • <span className="font-medium">{key}:</span> {value.slice(0, 40)}...
-                        </div>
-                      ))
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
@@ -295,25 +277,20 @@ export default function SchemaRefinementPanel({
           {/* Action Buttons */}
           <div className="flex gap-3">
             <Button
-              onClick={handleAcceptRefinement}
-              className="flex-1"
-              size="lg"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Use Refined Schema
-            </Button>
-            <Button
               onClick={handleRejectRefinement}
-              variant="outline"
-              className="flex-1"
+              className="bg-red-700 hover:bg-red-800 flex-1"
               size="lg"
             >
               Keep Original
             </Button>
-          </div>
+            <Button
+              onClick={handleAcceptRefinement}
+              className="bg-green-700 hover:bg-green-800 flex-1"
+              size="lg"
+            >
+              Use Refined Schema
+            </Button>
 
-          <div className="text-xs text-gray-500 text-center">
-            The refined schema will generate new ideas in the next iteration
           </div>
         </div>
       )}

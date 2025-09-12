@@ -59,21 +59,17 @@ export default function DraggablePanel({
       // Remove drag attributes from the main container
     >
       <Card className={`
-        bg-white border-2 transition-all duration-200
-        ${isActive 
-          ? 'border-blue-200 shadow-lg' 
-          : 'border-gray-200 shadow-md opacity-75'
-        }
-        ${isDragging ? 'shadow-2xl scale-105' : ''}
+          transition-all duration-200 bg-[#c6d0e0] border-2 border-accent
+
+        ${isDragging ? ' scale-105' : ''}
       `}>
         {/* Drag Handle */}
         <div 
           {...listeners}
           className={`
-            h-6 w-full bg-gray-50 border-b border-gray-200 rounded-t-lg
+            h-6 w-full rounded-t-lg
             cursor-grab active:cursor-grabbing
             flex items-center justify-center
-            ${isActive ? 'bg-blue-50' : ''}
           `}
         >
           <div className="flex gap-1">

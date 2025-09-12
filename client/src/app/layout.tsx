@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased bg-background text-foreground min-h-screen flex flex-col`}>
           <Navbar />
-          <main className="flex-1 pt-20">
+          <main className="flex-1 pt-18">
             {children}
           </main>
           <ConditionalFooter />

@@ -36,43 +36,33 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
     ...normalizedSchema,
     constraints: normalizeConstraints(normalizedSchema.constraints)
   });
-  const [newCriteriaKey, setNewCriteriaKey] = useState('');
-  const [newCriteriaValue, setNewCriteriaValue] = useState('');
+  const [newCriteria, setNewCriteria] = useState('');
   const [newConstraint, setNewConstraint] = useState('');
 
-  const handleCriteriaChange = (key: string, value: string) => {
+  const handleCriteriaChange = (index: number, value: string) => {
     setEditedSchema(prev => ({
       ...prev,
-      criteria: {
-        ...prev.criteria,
-        [key]: value
-      }
+      criteria: prev.criteria.map((criteria, i) => 
+        i === index ? value : criteria
+      )
     }));
   };
 
   const handleAddCriteria = () => {
-    if (newCriteriaKey.trim() && newCriteriaValue.trim()) {
+    if (newCriteria.trim()) {
       setEditedSchema(prev => ({
         ...prev,
-        criteria: {
-          ...prev.criteria,
-          [newCriteriaKey.trim()]: newCriteriaValue.trim()
-        }
+        criteria: [...prev.criteria, newCriteria.trim()]
       }));
-      setNewCriteriaKey('');
-      setNewCriteriaValue('');
+      setNewCriteria('');
     }
   };
 
-  const handleRemoveCriteria = (key: string) => {
-    setEditedSchema(prev => {
-      const newCriteria = { ...prev.criteria };
-      delete newCriteria[key];
-      return {
-        ...prev,
-        criteria: newCriteria
-      };
-    });
+  const handleRemoveCriteria = (index: number) => {
+    setEditedSchema(prev => ({
+      ...prev,
+      criteria: prev.criteria.filter((_, i) => i !== index)
+    }));
   };
 
   const handleAddConstraint = () => {
@@ -121,62 +111,72 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
       className="w-[500px] space-y-6"
     >
       <div className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="flex items-center justify-center gap-2">
           <Edit3 className="w-5 h-5 text-blue-500" />
-          <h2 className="text-xl font-semibold text-gray-900">Refine Your Schema</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Refine Your Ideation Plan</h2>
         </div>
-        <p className="text-sm text-gray-600">
+        <p className="text-md text-gray-600">
           Edit criteria and constraints to perfect your ideation framework
         </p>
       </div>
 
       <div className="space-y-6">
-        {/* Context & Purpose (Read-only) */}
-        <Card className="p-4 bg-gray-50">
-          <div className="space-y-3">
-            <div>
-              <Label className="text-sm font-medium text-gray-700">Context</Label>
-              <p className="text-sm text-gray-600 mt-1">{editedSchema.context}</p>
-            </div>
-            <div>
-              <Label className="text-sm font-medium text-gray-700">Purpose</Label>
-              <p className="text-sm text-gray-600 mt-1">{editedSchema.purpose}</p>
-            </div>
+        {/* Context & Purpose */}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label className="text-base font-semibold text-gray-900">Context</Label>
+            <Textarea
+              value={editedSchema.context}
+              onChange={(e) => {
+                const el = e.target as HTMLTextAreaElement;
+                setEditedSchema(prev => ({ ...prev, context: el.value }));
+
+                // auto-grow
+                el.style.height = "auto";
+                el.style.height = el.scrollHeight + "px";
+              }}
+              className="bg-blue-50"
+              placeholder="Describe the context of your goal for idea generation and rapid prototyping"
+            />
+
           </div>
-        </Card>
+          
+          <div className="space-y-2">
+            <Label className="text-base font-semibold text-gray-900">Purpose</Label>
+            <Textarea
+              value={editedSchema.purpose}
+              onChange={(e) => {
+                const el = e.target as HTMLTextAreaElement;
+                setEditedSchema(prev => ({ ...prev, purpose: el.value }));
+
+                // auto-grow
+                el.style.height = "auto";
+                el.style.height = el.scrollHeight + "px";
+              }}
+              className="bg-blue-50"
+              placeholder="Describe the purpose of your idea generation and rapid prototyping"
+              />
+          </div>
+        </div>
 
         {/* Criteria Section */}
         <div className="space-y-4">
           <Label className="text-base font-semibold text-gray-900">Success Criteria</Label>
           
-          <div className="space-y-3">
-            {Object.entries(editedSchema.criteria).map(([key, value]) => (
-              <Card key={key} className="p-3">
-                <div className="flex gap-3 items-start">
-                  <div className="flex-1 space-y-2">
-                    <Input
-                      value={key}
-                      onChange={(e) => {
-                        const newKey = e.target.value;
-                        const newCriteria = { ...editedSchema.criteria };
-                        delete newCriteria[key];
-                        newCriteria[newKey] = value;
-                        setEditedSchema(prev => ({ ...prev, criteria: newCriteria }));
-                      }}
-                      placeholder="Criteria name"
-                      className="font-medium"
-                    />
-                    <Textarea
-                      value={value}
-                      onChange={(e) => handleCriteriaChange(key, e.target.value)}
-                      placeholder="Describe this criteria"
-                      className="min-h-[60px]"
-                    />
-                  </div>
+          <div className="space-y-2">
+            {editedSchema.criteria.map((criteria, index) => (
+              <Card key={index} className="bg-black">
+                <div className="flex gap-2 items-center">
+                  <Input
+                    value={criteria}
+                    onChange={(e) => handleCriteriaChange(index, e.target.value)}
+                    placeholder="Criteria description"
+                    className="flex-1"
+                  />
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleRemoveCriteria(key)}
+                    onClick={() => handleRemoveCriteria(index)}
                     className="text-red-500 hover:text-red-700"
                   >
                     <X className="w-4 h-4" />
@@ -187,28 +187,22 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
           </div>
 
           {/* Add New Criteria */}
-          <Card className="p-3 border-dashed">
-            <div className="space-y-2">
+          <Card className="bg-black border-dashed">
+            <div className="flex gap-2">
               <Input
-                value={newCriteriaKey}
-                onChange={(e) => setNewCriteriaKey(e.target.value)}
-                placeholder="New criteria name"
-              />
-              <Textarea
-                value={newCriteriaValue}
-                onChange={(e) => setNewCriteriaValue(e.target.value)}
-                placeholder="Describe this criteria"
-                className="min-h-[60px]"
+                value={newCriteria}
+                onChange={(e) => setNewCriteria(e.target.value)}
+                placeholder="Click to add a new criteria"
+                className="flex-1"
+                onKeyPress={(e) => e.key === 'Enter' && handleAddCriteria()}
               />
               <Button
                 onClick={handleAddCriteria}
                 variant="outline"
                 size="sm"
-                className="w-full"
-                disabled={!newCriteriaKey.trim() || !newCriteriaValue.trim()}
+                disabled={!newCriteria.trim()}
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Criteria
+                <Plus className="w-4 h-4" />
               </Button>
             </div>
           </Card>
@@ -220,7 +214,7 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
           
           <div className="space-y-2">
             {normalizeConstraints(editedSchema.constraints).map((constraint, index) => (
-              <Card key={index} className="p-3">
+              <Card key={index} className="bg-black">
                 <div className="flex gap-3 items-center">
                   <Input
                     value={constraint}
@@ -242,12 +236,12 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
           </div>
 
           {/* Add New Constraint */}
-          <Card className="p-3 border-dashed">
+          <Card className="bg-black border-dashed">
             <div className="flex gap-2">
               <Input
                 value={newConstraint}
                 onChange={(e) => setNewConstraint(e.target.value)}
-                placeholder="Add a new constraint"
+                placeholder="Click to add a new constraint"
                 className="flex-1"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddConstraint()}
               />
@@ -270,13 +264,8 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
         className="w-full"
         size="lg"
       >
-        <Check className="w-4 h-4 mr-2" />
-        Finalize Schema
+        Finalize Ideation Plan
       </Button>
-
-      <div className="text-xs text-gray-500 text-center">
-        Your refined schema will be used to generate targeted ideas
-      </div>
     </motion.div>
   );
 }

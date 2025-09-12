@@ -171,7 +171,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
   // Show loading state during hydration
   if (!isMounted) {
     return (
-      <div className="h-screen w-full bg-gray-50 overflow-hidden relative flex items-center justify-center">
+      <div className="h-screen w-full bg-gray-900 overflow-hidden relative flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
           <p className="text-sub-foreground">Loading ideation canvas...</p>
@@ -181,23 +181,24 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
   }
 
   return (
-    <div className="h-screen w-full bg-gray-50 overflow-hidden relative">
+    <div className="h-screen w-full bg-white overflow-hidden relative">
       {/* Canvas Background Grid - Fixed positioning */}
       <div 
         className="absolute inset-0 opacity-20 pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
+            linear-gradient(white, 1px, transparent 1px),
+            linear-gradient(90deg, white, 1px, transparent 1px)
           `,
-          backgroundSize: '20px 20px'
+          backgroundSize: '27px 27px'
         }}
       />
 
+
       {/* Canvas Controls */}
       <div className="absolute top-4 right-4 z-50 flex gap-2">
-        <Button variant="outline" size="sm" onClick={handleSaveSession}>
-          <Save className="w-4 h-4 mr-2" />
+        <Button variant="outline" size="lg" onClick={handleSaveSession}>
+          <Save className="" />
           Save
         </Button>
       </div>
@@ -225,16 +226,16 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
       >
         {({ zoomIn, zoomOut, resetTransform }) => (
           <>
-            {/* Zoom Controls */}
-            <div className="absolute bottom-4 right-4 z-50 flex flex-col gap-2">
-              <Button variant="outline" size="sm" onClick={() => zoomIn()}>
-                <ZoomIn className="w-4 h-4" />
+            {/* Zoom Controls - Moved outside to be fixed on screen */}
+            <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+              <Button variant="outline" size="lg" onClick={() => zoomIn()}>
+                <ZoomIn className="w-10 h-10" />
               </Button>
-              <Button variant="outline" size="sm" onClick={() => zoomOut()}>
-                <ZoomOut className="w-4 h-4" />
+              <Button variant="outline" size="lg" onClick={() => zoomOut()}>
+                <ZoomOut className="w-10 h-10" />
               </Button>
-              <Button variant="outline" size="sm" onClick={() => resetTransform()}>
-                <RotateCcw className="w-4 h-4" />
+              <Button variant="outline" size="lg" onClick={() => resetTransform()}>
+                <RotateCcw className="w-10 h-10" />
               </Button>
             </div>
 
