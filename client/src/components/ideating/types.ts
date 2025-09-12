@@ -80,7 +80,8 @@ export const generateConnectionId = (fromId: string, toId: string): string => {
 // Calculate horizontal stacking position for new iteration
 export const calculateIterationPosition = (
   iterationNumber: number, 
-  panelType: PanelType
+  panelType: PanelType,
+  allPanels?: Record<string, PanelInstance>
 ): PanelPosition => {
   const basePositions: Record<PanelType, PanelPosition> = {
     'context-input': { x: 100, y: 100 },
@@ -91,6 +92,33 @@ export const calculateIterationPosition = (
   };
 
   const basePos = basePositions[panelType];
+
+  // For iteration 0, use base positions
+  if (iterationNumber === 0) {
+    return basePos;
+  }
+
+  // For new iterations (workflow restart), find the rightmost panel from previous iteration
+  // and position the new panel at position.x + PANEL_DIMENSIONS.width + 390
+  if (allPanels && iterationNumber > 0) {
+    const previousIterationPanels = Object.values(allPanels).filter(
+      panel => panel.iterationNumber === iterationNumber - 1
+    );
+    
+    if (previousIterationPanels.length > 0) {
+      // Find the rightmost panel from the previous iteration
+      const rightmostPanel = previousIterationPanels.reduce((rightmost, current) => 
+        current.position.x > rightmost.position.x ? current : rightmost
+      );
+      
+      return {
+        x: rightmostPanel.position.x + PANEL_DIMENSIONS.width + 390,
+        y: basePos.y
+      };
+    }
+  }
+
+  // Fallback to original calculation if allPanels not provided or no previous panels found
   const horizontalOffset = iterationNumber * (PANEL_DIMENSIONS.width + PANEL_DIMENSIONS.margin * 2);
 
   return {
@@ -101,7 +129,48 @@ export const calculateIterationPosition = (
 
 // Calculate position for next panel in workflow (to the right of current panel)
 export const calculateNextPanelPosition = (currentPanel: PanelInstance): PanelPosition => {
-  const horizontalGap = 100; // Gap between panels
+  
+  if (currentPanel.type === 'schema-refinement') {
+    return {
+      x: currentPanel.position.x + PANEL_DIMENSIONS.width + 120,
+      y: currentPanel.position.y
+    };
+  }
+
+  if (currentPanel.type === 'ranking') {
+    return {
+      x: currentPanel.position.x + PANEL_DIMENSIONS.width + 390,
+      y: currentPanel.position.y
+    };
+  }
+
+  if (currentPanel.type === 'idea-generation') {
+    return {
+      x: currentPanel.position.x + PANEL_DIMENSIONS.width + 300,
+      y: currentPanel.position.y
+    };
+  }
+
+  if (currentPanel.type === 'schema-editing') {
+    return {
+      x: currentPanel.position.x + PANEL_DIMENSIONS.width + 230,
+      y: currentPanel.position.y
+    };
+  }
+
+  if (currentPanel.type === 'context-input') {
+    return {
+      x: currentPanel.position.x + PANEL_DIMENSIONS.width + 120,
+      y: currentPanel.position.y
+    };
+  }
+
+  return {
+    x: currentPanel.position.x + PANEL_DIMENSIONS.width + 150,
+    y: currentPanel.position.y
+  };
+
+  const horizontalGap = 150; // Gap between panels
   return {
     x: currentPanel.position.x + PANEL_DIMENSIONS.width + horizontalGap,
     y: currentPanel.position.y // Same vertical level

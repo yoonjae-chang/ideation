@@ -26,8 +26,8 @@ function HomeContent() {
 
   return (
     <div className=" md:pb-16 pb-7">
-      <section className="py-12 px-4 sm:px-6 lg:px-8 min-h-[63vh] max-w-5xl mx-auto text-center">
-          <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6 md:py-15 py-10">
+      <section className="flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 min-h-[63vh] max-w-5xl mx-auto text-center">
+          <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-8">
             Prototyping <span className="text-accent">Ideas</span> Into Reality 
             <div className="md:mt-4 mt-2">
             <AnimatedGradientText
@@ -70,7 +70,7 @@ function HomeContent() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 mt-10 bg-card">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <HyperText className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <HyperText className="text-3xl md:text-5xl font-bold text-foreground mb-4">
               Quick Start Templates
             </HyperText>
             <p className="md:text-[20px] text-sub-foreground max-w-2xl mx-auto">
@@ -117,7 +117,7 @@ function HomeContent() {
 
       <section id="how-it-works" className="md:py-22 py-12 px-4 sm:px-20 lg:px-8">
         <div className="max-w-5xl mx-auto text-center">
-          <HyperText className="text-2xl md:text-5xl font-bold text-foreground mb-4">
+          <HyperText className="text-3xl md:text-5xl font-bold text-foreground mb-4">
             How It Works
           </HyperText>
           <div className="mt-6 max-w-3xl mx-auto text-sub-foreground md:text-xl text-base ">

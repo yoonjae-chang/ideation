@@ -255,7 +255,7 @@ export default function IdeationCanvas({ selectedTemplate }: IdeationCanvasProps
     
     // Create schema editing panel for new iteration
     const schemaEditPanelId = generatePanelId('schema-editing', newIterationNumber);
-    const schemaEditPosition = calculateIterationPosition(newIterationNumber, 'schema-editing');
+    const schemaEditPosition = calculateIterationPosition(newIterationNumber, 'schema-editing', allPanels);
 
     const schemaEditPanel: PanelInstance = {
       id: schemaEditPanelId,

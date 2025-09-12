@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Plus, X, Edit3 } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { IdeaSchema } from '@/actions/serverActions';
 
 interface SchemaEditorPanelProps {
@@ -104,6 +104,8 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
     onComplete(editedSchema);
   };
 
+  const inputClass = "bg-blue-50 placeholder:text-gray-600 text-gray-900";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -112,8 +114,7 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
     >
       <div className="text-center">
         <div className="flex items-center justify-center gap-2">
-          <Edit3 className="w-5 h-5 text-blue-500" />
-          <h2 className="text-xl font-semibold text-gray-900">Refine Your Ideation Plan</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Edit Your Ideation Plan</h2>
         </div>
         <p className="text-md text-gray-600">
           Edit criteria and constraints to perfect your ideation framework
@@ -165,13 +166,13 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
           
           <div className="space-y-2">
             {editedSchema.criteria.map((criteria, index) => (
-              <Card key={index} className="bg-black">
+              <Card key={index} className="bg-blue-50">
                 <div className="flex gap-2 items-center">
                   <Input
                     value={criteria}
                     onChange={(e) => handleCriteriaChange(index, e.target.value)}
                     placeholder="Criteria description"
-                    className="flex-1"
+                    className={inputClass}
                   />
                   <Button
                     variant="ghost"
@@ -187,13 +188,13 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
           </div>
 
           {/* Add New Criteria */}
-          <Card className="bg-black border-dashed">
+          <Card className="bg-blue-50 border-dashed">
             <div className="flex gap-2">
               <Input
                 value={newCriteria}
                 onChange={(e) => setNewCriteria(e.target.value)}
                 placeholder="Click to add a new criteria"
-                className="flex-1"
+                className={inputClass}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddCriteria()}
               />
               <Button
@@ -214,13 +215,13 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
           
           <div className="space-y-2">
             {normalizeConstraints(editedSchema.constraints).map((constraint, index) => (
-              <Card key={index} className="bg-black">
+              <Card key={index} className="bg-blue-50">
                 <div className="flex gap-3 items-center">
                   <Input
                     value={constraint}
                     onChange={(e) => handleConstraintChange(index, e.target.value)}
                     placeholder="Constraint description"
-                    className="flex-1"
+                    className={inputClass}
                   />
                   <Button
                     variant="ghost"
@@ -236,13 +237,13 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
           </div>
 
           {/* Add New Constraint */}
-          <Card className="bg-black border-dashed">
+          <Card className="bg-blue-50 border-dashed">
             <div className="flex gap-2">
               <Input
                 value={newConstraint}
                 onChange={(e) => setNewConstraint(e.target.value)}
                 placeholder="Click to add a new constraint"
-                className="flex-1"
+                className={inputClass}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddConstraint()}
               />
               <Button

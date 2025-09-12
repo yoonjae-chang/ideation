@@ -87,11 +87,10 @@ export default function SchemaRefinementPanel({
     >
       <div className="text-center">
         <div className="flex items-center justify-center gap-2">
-          <RefreshCw className="w-5 h-5 text-blue-500" />
-          <h2 className="text-xl font-semibold text-gray-900">Refine Schema</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Refine Ideation Plan</h2>
         </div>
         <p className="text-md text-gray-600">
-          Use your idea rankings to improve the schema for better future results
+          Use your idea rankings to improve the ideation plan for better future results
         </p>
       </div>
 

@@ -35,7 +35,7 @@ export const prompts = {
             ]
         }
         `,
-        maxTokens: 4000,
+        maxTokens: 8000,
     },
     
     // refineSchemaBasedOnFeedback: {
@@ -91,7 +91,7 @@ export const prompts = {
         ...
         ]
 
-        Now add onto or modify the schema based on the user's rankings for the success of the ideas and their descriptions. ONLY RETURN THE SCHEMA in the JSON format below, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE or CONTEXT repeat them verbatim:
+        Now add onto or modify the schema based on the user's rankings for the success of the ideas and their descriptions. Add the ideas that are rated 5 stars to the successful_ideas and add all the ideas to the past_ideas. DO NOT REPEAT THE IDEAS THAT ARE ALREADY IN THE successful_ideas OR past_ideas. ONLY RETURN THE SCHEMA in the JSON format below, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE or CONTEXT repeat them verbatim:
         {
             "purpose": "To generate ideas for a specific purpose",
             "context": "The context of the user's goal for idea generation and rapid prototyping",
@@ -104,11 +104,21 @@ export const prompts = {
             "constraints": [
                 "Relatively feasible to implement for my company",
                 "No traditional billboard ads"
-            ]
+            ],
+            "successful_ideas": [
+                "Idea 1",
+                "Idea 2",
+                ...
+            ],
+            "past_ideas": [
+                "Idea 1",
+                "Idea 2",
+                ...
+            ],
         }
 
         `,
-        maxTokens: 4000,
+        maxTokens: 8000,
     },
 
 
@@ -135,10 +145,20 @@ export const prompts = {
             "constraints": [
                 "Relatively feasible to implement for my company",
                 "No traditional billboard ads"
-            ]
+            ],
+            "successful_examples": [
+                "Idea 1",
+                "Idea 2",
+                ...
+            ],
+            "past_ideas": [
+                "Idea 1",
+                "Idea 2",
+                ...
+            ],
         }
 
-        Now generate 30 different ideas that are extremely high quality and extremely wide range of ideas. Use the schema as a guide to generate the ideas; however, do not limit the scope of the ideas to the schem and use your best discernment to generate the ideas. The purpose and context should be regarded as more important than the criteria and constraints. ONLY RETURN THE IDEAS in the JSON format below, NO OTHER TEXT.:
+        Now generate 30 different ideas that are extremely high quality and extremely wide range of ideas. Use the schema as a guide to generate the ideas; however, do not limit the scope of the ideas to the schem and use your best discernment to generate the ideas. The purpose and context should be regarded as more important than the criteria and constraints. Use the successful_ideas as inspiration for new ideas but do not limit the scope of the ideas to solely the successful_ideas use your best discernment and expertise in protyping and ideation to generate the ideas. Also, do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the past_ideas. ONLY RETURN THE IDEAS in the JSON format below, NO OTHER TEXT:
         {
             "ideas":
                 [
@@ -174,7 +194,17 @@ export const prompts = {
             "constraints": [
                 "Relatively feasible to implement for my company",
                 "No traditional billboard ads"
-            ]
+            ],
+            "successful_ideas": [
+                "Idea 1",
+                "Idea 2",
+                ...
+            ],
+            "past_ideas": [
+                "Idea 1",
+                "Idea 2",
+                ...
+            ],
         }
 
         This is the list of ideas and their descriptions:
@@ -192,7 +222,7 @@ export const prompts = {
                 ]
         }
 
-        Now evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE top 10 IDEAS that are extremely high quality using your expert judgement and also meet the purpose and context of the user's goal for idea generation and rapid prototyping along with the criteria and constraints. MAKE SURE THE IDEAS ARE REPEATED VERBATIM FROM THE LIST OF IDEAS. EVALUATE HOLISTICALLY and don't be bias towards order
+        Now evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE top 15 IDEAS that are extremely high quality using your expert judgement and also meet the purpose and context of the user's goal for idea generation and rapid prototyping along with the criteria and constraints. MAKE SURE THE IDEAS ARE REPEATED VERBATIM FROM THE LIST OF IDEAS. EVALUATE HOLISTICALLY and don't be bias towards order. Do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the successful_ideas or past_ideas.
 
         in the JSON format below, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE:
         {
