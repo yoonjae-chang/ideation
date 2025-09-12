@@ -6,7 +6,7 @@ import ConditionalFooter from "@/components/ConditionalFooter";
 
 
 export const metadata: Metadata = {
-  title: "Prototyping Ideas",
+  title: "Ideation AI",
   icons: {
     icon: "/favicon.svg",
   },
