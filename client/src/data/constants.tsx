@@ -68,6 +68,5 @@ export const presets = [
         tone: 'engaging and inclusive',
         constraints: 'budget-friendly and accessible'
       },
-      
     }
   ];

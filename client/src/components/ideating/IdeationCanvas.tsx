@@ -32,9 +32,21 @@ import {
 
 interface IdeationCanvasProps {
   sessionId?: string;
+  selectedTemplate?: {
+    id: string;
+    title: string;
+    description: string;
+    purpose: string;
+    schema: {
+      audience: string;
+      domain: string;
+      tone: string;
+      constraints: string;
+    };
+  } | null;
 }
 
-export default function IdeationCanvas({ }: IdeationCanvasProps) {
+export default function IdeationCanvas({ selectedTemplate }: IdeationCanvasProps) {
   // Client-side hydration state
   const [isMounted, setIsMounted] = useState(false);
 
@@ -462,6 +474,7 @@ export default function IdeationCanvas({ }: IdeationCanvasProps) {
                               <ContextInputPanel
                                 onComplete={handleContextComplete}
                                 sessionData={(panel.data?.sessionData as { context: string; purpose: string; preferences: string }) || { context: '', purpose: '', preferences: '' }}
+                                selectedTemplate={panel.iterationNumber === 0 ? selectedTemplate : null}
                               />
                             );
                           

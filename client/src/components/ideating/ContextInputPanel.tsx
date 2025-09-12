@@ -21,13 +21,41 @@ interface ContextInputPanelProps {
     purpose: string;
     preferences: string;
   };
+  selectedTemplate?: {
+    id: string;
+    title: string;
+    description: string;
+    purpose: string;
+    schema: {
+      audience: string;
+      domain: string;
+      tone: string;
+      constraints: string;
+    };
+  } | null;
 }
 
-export default function ContextInputPanel({ onComplete, sessionData }: ContextInputPanelProps) {
-  const [formData, setFormData] = useState(sessionData);
+export default function ContextInputPanel({ onComplete, sessionData, selectedTemplate }: ContextInputPanelProps) {
+  // Initialize form data with template values if available, otherwise use sessionData
+  const getInitialFormData = () => {
+    if (selectedTemplate && (!sessionData.context && !sessionData.purpose && !sessionData.preferences)) {
+      return {
+        id: sessionData.id,
+        context: `Working in ${selectedTemplate.schema.domain} for ${selectedTemplate.schema.audience}`,
+        purpose: selectedTemplate.purpose,
+        preferences: `Ideas should be ${selectedTemplate.schema.tone} and ${selectedTemplate.schema.constraints}`
+      };
+    }
+    return sessionData;
+  };
+
+  const [formData, setFormData] = useState(getInitialFormData());
   const [isGenerating, setIsGenerating] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+
+   
+  
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
@@ -89,11 +117,21 @@ export default function ContextInputPanel({ onComplete, sessionData }: ContextIn
       <div className="text-center">
         <div className="flex items-center justify-center gap-2">
           <Sparkles className="w-5 h-5 text-blue-500" />
-          <h2 className="text-xl font-semibold text-gray-900">Start Your Brainstorming</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            {selectedTemplate ? `${selectedTemplate.title} Template` : 'Start Your Brainstorming'}
+          </h2>
         </div>
         <p className="text-md text-gray-600">
-          Provide context and goals to generate personalized ideation 
+          {selectedTemplate 
+            ? `Using ${selectedTemplate.title.toLowerCase()} template. Modify the fields below as needed.`
+            : 'Provide context and goals to generate personalized ideation'
+          }
         </p>
+        {selectedTemplate && (
+          <div className="mt-2 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full inline-block">
+            Template: {selectedTemplate.title}
+          </div>
+        )}
       </div>
 
       <div className="space-y-4">
