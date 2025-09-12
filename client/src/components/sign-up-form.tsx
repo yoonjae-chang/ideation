@@ -51,6 +51,8 @@ function SignUpFormContent({
       });
       if (error) throw error;
       router.push("/");
+      // Force refresh to reset all auth state and update UI
+      window.location.reload();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

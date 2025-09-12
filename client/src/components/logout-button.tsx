@@ -11,6 +11,8 @@ export function LogoutButton() {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/auth/login");
+    // Force refresh to reset all auth state
+    window.location.reload();
   };
 
   return <Button onClick={logout}>Logout</Button>;

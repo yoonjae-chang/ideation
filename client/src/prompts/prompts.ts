@@ -49,7 +49,7 @@ export const prompts = {
     refineSchemaBasedOnIdeaPreferences: {
         systemPrompt: `You are the best idea generation and rapid prototyping assistant in the world who expertly understands the ins and outs of idea generation and rapid prototyping. You are given a schema that defines the purpose, preferences and criteria for success of the ideas. Your job is to refine the schema based on the user's rankings for the success of the ideas. ONLY RETURN THE SCHEMA in JSON format, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE AND CONTEXT`,
         userPrompt: `
-        Please refine the schema based on the user's rankings for the success of these ideas. Extract the features of the ideas that are most highly ranked by the user and incorporate them to the schema.
+        Please refine the schema based on the user's rankings for the success of these ideas. Extract the features of the ideas that are most highly ranked by the user and incorporate them to the schema. Try to understand the user's preferences and incorporate them to the schema.
 
         This is the user's schema:
         {{.schema}}

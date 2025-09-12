@@ -42,6 +42,8 @@ function LoginFormContent({
       if (error) throw error;
       // Redirect to the 'next' parameter if present, otherwise redirect to protected route
       router.push(next || "/");
+      // Force refresh to reset all auth state and update UI
+      window.location.reload();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
