@@ -50,9 +50,9 @@ function SignUpFormContent({
         },
       });
       if (error) throw error;
+      // Refresh to update server-rendered auth components
+      router.refresh();
       router.push("/");
-      // Force refresh to reset all auth state and update UI
-      window.location.reload();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
