@@ -204,7 +204,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
       </div>
 
       {/* Flow Guide */}
-      <FlowGuide currentStep={currentStep} />
+      {/* <FlowGuide currentStep={currentStep} /> */}
 
       {/* Main Canvas */}
       <TransformWrapper
