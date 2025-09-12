@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatedGradientText } from "@/components/magicui/animated-gradient-text";
+import { PulsatingButton } from "@/components/magicui/pulsating-button";
+import { ShineBorder } from "@/components/magicui/shine-border";
+import { HyperText } from "@/components/magicui/hyper-text";
+
+
+
 
 function HomeContent() {
   const router = useRouter();
@@ -18,31 +25,42 @@ function HomeContent() {
 
 
   return (
-    <div className="md:pb-16 pb-7">
-      <section className="py-12 px-4 sm:px-6 lg:px-8 min-h-[50vh] max-w-5xl mx-auto text-center">
+    <div className=" md:pb-16 pb-7">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 min-h-[63vh] max-w-5xl mx-auto text-center">
           <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-6 md:py-15 py-10">
             Prototyping <span className="text-accent">Ideas</span> Into Reality 
-            <div className="text-purple-500 md:mt-4 mt-2">At The Speed Of Light</div>
+            <div className="md:mt-4 mt-2">
+            <AnimatedGradientText
+                speed={1}
+                colorFrom="#ffaa40"
+                colorTo="#9c40ff"
+                className="font-semibold tracking-tight"
+              >
+                At The Speed Of Light
+              </AnimatedGradientText>
+
+
+            </div>
           </div>
-          <div className="text-[22px] text-sub-foreground mb-8 max-w-2xl mx-auto">
+          <div className="md:text-[22px] text-[16px] text-sub-foreground mb-8 max-w-2xl mx-auto">
             AI-powered ideation and prototyping that learns your preferences, takes account of your preferences and context,
             and helps you discover breakthrough solutions.
           </div>
           
-          <div className="md:mt-10 mt-5 flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
+          <div className="px-20 md:mt-18 mt-10 flex flex-col sm:flex-row gap-5 justify-center">
+            <PulsatingButton
               onClick={() => {router.push('/ideating');}}
               disabled={false}
-              className="text-lg px-8 py-6 "
+              pulseColor="#7C5CFF"
+              className="md:text-xl text-md"
             >
               Start Idea Generation
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            </PulsatingButton>
             
             <Button
               variant="outline"
               onClick={() => {document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });}}
-              className="text-lg px-8 py-6 border-gray-300"
+              className="md:text-xl text-md px-8 py-6 border-gray-300"
             >
               How It Works
             </Button>
@@ -52,9 +70,9 @@ function HomeContent() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 mt-10 bg-card">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h3 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
+            <HyperText className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Quick Start Templates
-            </h3>
+            </HyperText>
             <p className="md:text-[20px] text-sub-foreground max-w-2xl mx-auto">
               Jump-start your ideation and prototyping with pre-configured templates optimized for common scenarios.
             </p>
@@ -62,7 +80,8 @@ function HomeContent() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {presets.map((preset) => (
-              <Card key={preset.id} className="card-hover group flex flex-col h-full" >
+              <Card key={preset.id} className="relative card-hover group flex flex-col h-full" >
+                <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 rounded-lg bg-accent/10 text-accent group-hover:bg-accent/20 transition-colors">
@@ -98,13 +117,13 @@ function HomeContent() {
 
       <section id="how-it-works" className="md:py-22 py-12 px-4 sm:px-20 lg:px-8">
         <div className="max-w-5xl mx-auto text-center">
-          <div className="text-2xl md:text-5xl font-bold text-foreground mb-4">
+          <HyperText className="text-2xl md:text-5xl font-bold text-foreground mb-4">
             How It Works
-          </div>
+          </HyperText>
           <div className="mt-6 max-w-3xl mx-auto text-sub-foreground md:text-xl text-base ">
             Our AI-powered ideation and prototyping platform helps you generate and refine ideas quickly and efficiently by taking account of your preferences and context.
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-8">
+          <div className= "grid grid-cols-1 md:grid-cols-3 gap-10 mt-18">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center mx-auto">
                 <span className="text-purple-500 text-xl font-bold">1</span>
@@ -143,7 +162,7 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="bg-background w-full h-screen"></div>}>
       <HomeContent />
     </Suspense>
   );

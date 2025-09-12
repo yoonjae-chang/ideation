@@ -52,7 +52,7 @@ function SignUpFormContent({
       if (error) throw error;
       // Refresh to update server-rendered auth components
       router.refresh();
-      router.push("/");
+      window.location.href = next || "/";
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {

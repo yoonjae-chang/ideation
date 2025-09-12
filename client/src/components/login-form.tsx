@@ -43,7 +43,7 @@ function LoginFormContent({
       // Refresh to update server-rendered auth components
       router.refresh();
       // Redirect to the 'next' parameter if present, otherwise redirect to protected route
-      router.push(next || "/");
+      window.location.href = next || "/";
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
