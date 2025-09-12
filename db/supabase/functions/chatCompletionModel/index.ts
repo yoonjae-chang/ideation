@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
       userPrompt, 
       model = "gpt-4o-mini", 
       temperature = 1,
-      maxTokens = 4000,
+      maxTokens = 8000,
       expectArray = false
     } = requestBody
 
@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
 
     // Add timeout to OpenAI request (25 seconds to stay under Edge Function limit)
     const completionTimeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('OpenAI request timeout')), 25000)
+      setTimeout(() => reject(new Error('OpenAI request timeout')), 100000)
     )
 
     const response = await Promise.race([completionPromise, completionTimeoutPromise]) as any
