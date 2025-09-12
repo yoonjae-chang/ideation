@@ -162,7 +162,7 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
 
         {/* Criteria Section */}
         <div className="space-y-2">
-          <Label className="text-base font-semibold text-gray-900">Success Criteria</Label>
+          <Label className="text-base font-semibold text-gray-900">Success Criteria (Edit by clicking on the criteria)</Label>
           
           <div className="space-y-2">
             {editedSchema.criteria.map((criteria, index) => (
@@ -211,7 +211,7 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
 
         {/* Constraints Section */}
         <div className="space-y-2">
-          <Label className="text-base font-semibold text-gray-900">Constraints</Label>
+          <Label className="text-base font-semibold text-gray-900">Constraints (Edit by clicking on the constraints)</Label>
           
           <div className="space-y-2">
             {normalizeConstraints(editedSchema.constraints).map((constraint, index) => (

@@ -222,7 +222,7 @@ export const prompts = {
                 ]
         }
 
-        Now evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE top 15 IDEAS that are extremely high quality using your expert judgement and also meet the purpose and context of the user's goal for idea generation and rapid prototyping along with the criteria and constraints. MAKE SURE THE IDEAS ARE REPEATED VERBATIM FROM THE LIST OF IDEAS. EVALUATE HOLISTICALLY and don't be bias towards order. Do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the successful_ideas or past_ideas.
+        Now evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE top 10 IDEAS that are extremely high quality using your expert judgement and also meet the purpose and context of the user's goal for idea generation and rapid prototyping along with the criteria and constraints. MAKE SURE THE IDEAS ARE REPEATED VERBATIM FROM THE LIST OF IDEAS. EVALUATE HOLISTICALLY and don't be bias towards order. Do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the successful_ideas or past_ideas.
 
         in the JSON format below, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE:
         {
