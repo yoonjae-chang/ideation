@@ -130,10 +130,10 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
           >
             <div className="flex items-center justify-center gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
-              <span className="text-lg text-blue-900 font-medium">Generating Ideas...</span>
+              <span className="text-lg text-green-900 font-medium">Generating Ideas...</span>
             </div>
             <p className="text-md text-gray-600">
-              Creating 30 unique ideas based on your schema
+              Creating 50 unique ideas based on your schema
             </p>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <motion.div
@@ -156,7 +156,7 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
           >
             <div className="flex items-center justify-center gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-green-500" />
-              <span className="text-lg font-medium">Evaluating Ideas...</span>
+              <span className="text-lg font-medium text-green-900">Evaluating Ideas...</span>
             </div>
             <p className="text-sm text-gray-600">
               Analyzing and selecting the top 10 ideas

@@ -152,20 +152,13 @@ export default function RankingPanel({ ideas, rankings, onComplete }: RankingPan
       </div>
 
       {/* Complete Button */}
-      <div className="space-y-3">
-        {!allIdeasRanked && (
-          <div className="text-center text-sm text-amber-600 bg-amber-50 p-3 rounded-md">
-            Please rank all ideas before proceeding
-          </div>
-        )}
-        
+      <div className="space-y-3">        
         <Button
           onClick={handleComplete}
           disabled={!allIdeasRanked}
           className="w-full"
           size="lg"
         >
-          <CheckCircle className="w-4 h-4 mr-2" />
           Complete Ranking
         </Button>
       </div>

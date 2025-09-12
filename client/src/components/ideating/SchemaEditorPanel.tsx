@@ -160,7 +160,7 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
         </div>
 
         {/* Criteria Section */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <Label className="text-base font-semibold text-gray-900">Success Criteria</Label>
           
           <div className="space-y-2">
@@ -209,7 +209,7 @@ export default function SchemaEditorPanel({ schema, onComplete }: SchemaEditorPa
         </div>
 
         {/* Constraints Section */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <Label className="text-base font-semibold text-gray-900">Constraints</Label>
           
           <div className="space-y-2">
