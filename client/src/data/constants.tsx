@@ -1,4 +1,4 @@
-import { Lightbulb, Sparkles, Target, Zap, ArrowRight, Users, TrendingUp } from "lucide-react";
+import { Sparkles, Target, Zap, Users, TrendingUp } from "lucide-react";
 
 export const presets = [
     {
@@ -71,4 +71,3 @@ export const presets = [
       
     }
   ];
-  

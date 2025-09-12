@@ -1,6 +1,5 @@
 import { openai } from '@ai-sdk/openai';
 import { streamText, UIMessage, convertToModelMessages } from 'ai';
-import { prompts } from '@/prompts/prompts';
 import { createClient } from '@/lib/supabase/server';
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;

@@ -19,7 +19,7 @@ export interface PanelInstance {
   position: PanelPosition;
   isActive: boolean;
   isCompleted: boolean;
-  data?: any; // Panel-specific data
+  data?: Record<string, unknown> | null; // Panel-specific data
 }
 
 export interface WorkflowIteration {
@@ -32,7 +32,7 @@ export interface WorkflowIteration {
     preferences: string;
   };
   schema?: IdeaSchema;
-  ideas?: any[];
+  ideas?: unknown[];
   rankings?: Record<string, number>;
   isActive: boolean;
   isCompleted: boolean;

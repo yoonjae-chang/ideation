@@ -14,7 +14,6 @@ interface DraggablePanelProps {
   iterationNumber: number;
   panelType: PanelType;
   children: React.ReactNode;
-  onPositionChange?: (id: string, position: PanelPosition) => void;
 }
 
 export default function DraggablePanel({ 
@@ -24,11 +23,9 @@ export default function DraggablePanel({
   isCompleted,
   iterationNumber,
   panelType,
-  children,
-  onPositionChange
+  children
 }: DraggablePanelProps) {
   const {
-    attributes,
     listeners,
     setNodeRef,
     isDragging,

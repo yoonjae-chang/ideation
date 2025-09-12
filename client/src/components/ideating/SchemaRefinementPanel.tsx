@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, RefreshCw, ArrowRight, TrendingUp } from 'lucide-react';
+import { Loader2, RefreshCw, ArrowRight } from 'lucide-react';
 import { IdeaSchema, IdeaWithEvaluation, refineSchemaBasedOnIdeaPreferences, IdeaRanking } from '@/actions/serverActions';
 
 interface SchemaRefinementPanelProps {

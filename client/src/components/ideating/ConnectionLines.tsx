@@ -42,19 +42,6 @@ export default function ConnectionLines({
             L ${to.x} ${to.y}`;
   };
 
-  // Calculate arrow marker position and rotation
-  const calculateArrowTransform = (from: { x: number; y: number }, to: { x: number; y: number }) => {
-    const midX = from.x + (to.x - from.x) * 0.5;
-    
-    // Place arrow at the final segment
-    const arrowX = midX + (to.x - midX) * 0.7;
-    const arrowY = to.y;
-    
-    // Determine rotation based on direction
-    const rotation = to.x > midX ? 0 : 180;
-    
-    return `translate(${arrowX}, ${arrowY}) rotate(${rotation})`;
-  };
 
   // Get connection points for panels
   const getConnectionPoints = (fromPanelId: string, toPanelId: string) => {

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Plus, X, Edit3, Check } from 'lucide-react';
+import { Plus, X, Edit3 } from 'lucide-react';
 import { IdeaSchema } from '@/actions/serverActions';
 
 interface SchemaEditorPanelProps {

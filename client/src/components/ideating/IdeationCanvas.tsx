@@ -240,7 +240,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
   }, [allPanels]);
 
   // Create new iteration (loop back)
-  const createNewIteration = useCallback((refinedSchema: IdeaSchema, previousIterationData: any) => {
+  const createNewIteration = useCallback((refinedSchema: IdeaSchema, previousIterationData: WorkflowIteration) => {
     const newIterationNumber = currentIteration + 1;
     
     // Create schema editing panel for new iteration
@@ -463,14 +463,14 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
                             return (
                               <ContextInputPanel
                                 onComplete={handleContextComplete}
-                                sessionData={panel.data?.sessionData || { context: '', purpose: '', preferences: '' }}
+                                sessionData={(panel.data?.sessionData as { context: string; purpose: string; preferences: string }) || { context: '', purpose: '', preferences: '' }}
                               />
                             );
                           
                           case 'schema-editing':
                             return (
                               <SchemaEditorPanel
-                                schema={panel.data?.schema}
+                                schema={panel.data?.schema as IdeaSchema}
                                 onComplete={handleSchemaComplete}
                               />
                             );
@@ -478,7 +478,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
                           case 'idea-generation':
                             return (
                               <IdeaGenerationPanel
-                                schema={panel.data?.schema}
+                                schema={panel.data?.schema as IdeaSchema}
                                 onComplete={handleIdeasGenerated}
                               />
                             );
@@ -486,8 +486,8 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
                           case 'ranking':
                             return (
                               <RankingPanel
-                                ideas={panel.data?.ideas || []}
-                                rankings={panel.data?.rankings || {}}
+                                ideas={(panel.data?.ideas as any[]) || []}
+                                rankings={(panel.data?.rankings as Record<string, number>) || {}}
                                 onComplete={handleRankingComplete}
                               />
                             );
@@ -495,13 +495,13 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
                           case 'schema-refinement':
                             // Get schema from current iteration if not in panel data
                             const currentIteration = iterations[panel.iterationNumber];
-                            const schemaToUse = panel.data?.schema || currentIteration?.schema;
+                            const schemaToUse = (panel.data?.schema as IdeaSchema) || currentIteration?.schema;
                             
                             return (
                               <SchemaRefinementPanel
-                                schema={schemaToUse}
-                                rankings={panel.data?.rankings || {}}
-                                ideas={panel.data?.ideas || []}
+                                schema={schemaToUse as IdeaSchema}
+                                rankings={(panel.data?.rankings as Record<string, number>) || {}}
+                                ideas={(panel.data?.ideas as any[]) || []}
                                 onComplete={handleSchemaRefined}
                               />
                             );
