@@ -63,7 +63,7 @@ export default function IdeaModal({
           </div>
                         <div>
                             <h2 className="text-xl font-bold text-foreground">AI Ideation Assistant</h2>
-                            <p className="text-sm text-sub-foreground">Let's prototype and generate amazing ideas together</p>
+                                <p className="text-sm text-sub-foreground">Let&apos;s prototype and generate amazing ideas together</p>
               </div>
             </div>
                     <Button
@@ -86,8 +86,8 @@ export default function IdeaModal({
                             <div>
                                 <h3 className="text-lg font-semibold text-foreground mb-2">Welcome to AI Ideation!</h3>
                                 <p className="text-sub-foreground max-w-md">
-                                    I'm here to help you generate, refine, and prototype amazing ideas. 
-                                    Tell me about your project, goals, or what you'd like to create!
+                                    I&apos;m here to help you generate, refine, and prototype amazing ideas. 
+                                    Tell me about your project, goals, or what you&apos;d like to create!
                                 </p>
                 </div>
               </div>
@@ -199,4 +199,3 @@ export default function IdeaModal({
       </div>
     );
   }
-  

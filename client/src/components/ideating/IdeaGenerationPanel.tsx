@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, Lightbulb, Zap, Star } from 'lucide-react';
-import { IdeaSchema, ideaGeneration, ideaEvaluation, Idea, IdeaWithEvaluation } from '@/actions/serverActions';
+import { Loader2, Lightbulb, Zap } from 'lucide-react';
+import { IdeaSchema, ideaGeneration, ideaEvaluation, IdeaWithEvaluation } from '@/actions/serverActions';
 
 interface IdeaGenerationPanelProps {
   schema: IdeaSchema;
@@ -14,30 +13,21 @@ interface IdeaGenerationPanelProps {
 }
 
 export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerationPanelProps) {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isEvaluating, setIsEvaluating] = useState(false);
-  const [generatedIdeas, setGeneratedIdeas] = useState<Idea[]>([]);
-  const [evaluatedIdeas, setEvaluatedIdeas] = useState<IdeaWithEvaluation[]>([]);
   const [currentStep, setCurrentStep] = useState<'ready' | 'generating' | 'evaluating' | 'complete'>('ready');
   const [error, setError] = useState<string>('');
 
   const handleGenerateIdeas = async () => {
-    setIsGenerating(true);
     setCurrentStep('generating');
     setError('');
 
     try {
       // Step 1: Generate ideas
       const ideas = await ideaGeneration(schema);
-      setGeneratedIdeas(ideas);
-      setIsGenerating(false);
       
       // Step 2: Evaluate ideas
-      setIsEvaluating(true);
       setCurrentStep('evaluating');
       
       const evaluatedIdeas = await ideaEvaluation(schema, ideas);
-      setEvaluatedIdeas(evaluatedIdeas);
       setCurrentStep('complete');
       
       onComplete(evaluatedIdeas);
@@ -45,26 +35,9 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
       console.error('Error generating ideas:', error);
       setError('Failed to generate ideas. Please try again.');
       setCurrentStep('ready');
-    } finally {
-      setIsGenerating(false);
-      setIsEvaluating(false);
     }
   };
 
-  const getEvaluationColor = (evaluation: string) => {
-    const score = parseInt(evaluation);
-    if (score >= 85) return 'bg-green-100 text-green-800';
-    if (score >= 70) return 'bg-blue-100 text-blue-800';
-    if (score >= 55) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-gray-100 text-gray-800';
-  };
-
-  const getEvaluationIcon = (evaluation: string) => {
-    const score = parseInt(evaluation);
-    if (score >= 85) return <Star className="w-4 h-4" />;
-    if (score >= 70) return <Zap className="w-4 h-4" />;
-    return <Lightbulb className="w-4 h-4" />;
-  };
 
   return (
     <motion.div

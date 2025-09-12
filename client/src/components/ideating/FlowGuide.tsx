@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Circle, ArrowRight } from 'lucide-react';
-import { IdeationStep } from './IdeationCanvas';
+import { CheckCircle, ArrowRight } from 'lucide-react';
+import { PanelType } from './types';
 
 interface FlowGuideProps {
-  currentStep: IdeationStep;
+  currentStep: PanelType;
 }
 
 const steps = [

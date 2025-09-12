@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { DndContext, DragEndEvent, useSensor, useSensors, PointerSensor, DragStartEvent, DragMoveEvent } from '@dnd-kit/core';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ZoomIn, ZoomOut, RotateCcw, Save } from 'lucide-react';
 import { IdeaSchema } from '@/actions/serverActions';
@@ -26,18 +26,14 @@ import {
   Connection,
   generatePanelId,
   generateConnectionId,
-  calculateIterationPosition,
-  getNextPanelType,
-  getWorkflowConnections,
-  getLoopConnection,
-  WORKFLOW_SEQUENCE
+  calculateIterationPosition
 } from '@/components/ideating/types';
 
 interface IdeationCanvasProps {
   sessionId?: string;
 }
 
-export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
+export default function IdeationCanvas({ }: IdeationCanvasProps) {
   // Client-side hydration state
   const [isMounted, setIsMounted] = useState(false);
 
@@ -50,13 +46,6 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
   
   const [isDragging, setIsDragging] = useState(false);
   const [currentScale, setCurrentScale] = useState(1);
-
-  // Ensure component only renders after client-side hydration
-  useEffect(() => {
-    setIsMounted(true);
-    // Initialize first iteration
-    initializeFirstIteration();
-  }, []);
 
   // Initialize the first iteration with context input panel
   const initializeFirstIteration = useCallback(() => {
@@ -86,6 +75,13 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
     setActivePanel(contextPanelId);
   }, []);
 
+  // Ensure component only renders after client-side hydration
+  useEffect(() => {
+    setIsMounted(true);
+    // Initialize first iteration
+    initializeFirstIteration();
+  }, [initializeFirstIteration]);
+
   // Drag and drop sensors with improved settings
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -99,6 +95,30 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
 
   // Store initial position when drag starts
   const [initialDragPositions, setInitialDragPositions] = useState<Record<string, PanelPosition>>({});
+
+  // Update connections when a panel is moved
+  const updateConnectionsForPanel = useCallback((panelId: string, newPosition: PanelPosition) => {
+    setConnections(prev => prev.map(conn => {
+      if (conn.fromPanelId === panelId) {
+        return {
+          ...conn,
+          fromPoint: {
+            x: newPosition.x + 400, // Panel width
+            y: newPosition.y + 150  // Panel height / 2
+          }
+        };
+      } else if (conn.toPanelId === panelId) {
+        return {
+          ...conn,
+          toPoint: {
+            x: newPosition.x,
+            y: newPosition.y + 150
+          }
+        };
+      }
+      return conn;
+    }));
+  }, []);
 
   // Handle panel drag start
   const handleDragStart = useCallback((event: DragStartEvent) => {
@@ -141,7 +161,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
       // Update connections in real-time
       updateConnectionsForPanel(panelId, newPosition);
     }
-  }, [initialDragPositions, currentScale]);
+  }, [initialDragPositions, currentScale, updateConnectionsForPanel]);
 
   // Handle panel drag end
   const handleDragEnd = useCallback((event: DragEndEvent) => {
@@ -157,32 +177,8 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
     setIsDragging(false);
   }, []);
 
-  // Update connections when a panel is moved
-  const updateConnectionsForPanel = useCallback((panelId: string, newPosition: PanelPosition) => {
-    setConnections(prev => prev.map(conn => {
-      if (conn.fromPanelId === panelId) {
-        return {
-          ...conn,
-          fromPoint: {
-            x: newPosition.x + 400, // Panel width
-            y: newPosition.y + 150  // Panel height / 2
-          }
-        };
-      } else if (conn.toPanelId === panelId) {
-        return {
-          ...conn,
-          toPoint: {
-            x: newPosition.x,
-            y: newPosition.y + 150
-          }
-        };
-      }
-      return conn;
-    }));
-  }, []);
-
   // Create next panel in workflow
-  const createNextPanel = useCallback((currentPanelId: string, nextType: PanelType, data?: any) => {
+  const createNextPanel = useCallback((currentPanelId: string, nextType: PanelType, data?: Record<string, unknown>) => {
     const currentPanel = allPanels[currentPanelId];
     if (!currentPanel) return;
 
@@ -303,7 +299,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
   }, [currentIteration, iterations]);
 
   // Step progression handlers
-  const handleContextComplete = useCallback((data: any, generatedSchema: IdeaSchema) => {
+  const handleContextComplete = useCallback((data: { context: string; purpose: string; preferences: string; id?: string }, generatedSchema: IdeaSchema) => {
     if (!activePanel) return;
     
     // Update current iteration with session data and schema
@@ -322,7 +318,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
     createNextPanel(activePanel, 'idea-generation', { schema: updatedSchema });
   }, [activePanel, createNextPanel]);
 
-  const handleIdeasGenerated = useCallback((generatedIdeas: any[]) => {
+  const handleIdeasGenerated = useCallback((generatedIdeas: { idea: string; description: string; evaluation: string }[]) => {
     if (!activePanel) return;
     createNextPanel(activePanel, 'ranking', { ideas: generatedIdeas });
   }, [activePanel, createNextPanel]);
@@ -486,7 +482,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
                           case 'ranking':
                             return (
                               <RankingPanel
-                                ideas={(panel.data?.ideas as any[]) || []}
+                                ideas={(panel.data?.ideas as { idea: string; description: string; evaluation: string }[]) || []}
                                 rankings={(panel.data?.rankings as Record<string, number>) || {}}
                                 onComplete={handleRankingComplete}
                               />
@@ -501,7 +497,7 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
                               <SchemaRefinementPanel
                                 schema={schemaToUse as IdeaSchema}
                                 rankings={(panel.data?.rankings as Record<string, number>) || {}}
-                                ideas={(panel.data?.ideas as any[]) || []}
+                                ideas={(panel.data?.ideas as { idea: string; description: string; evaluation: string }[]) || []}
                                 onComplete={handleSchemaRefined}
                               />
                             );

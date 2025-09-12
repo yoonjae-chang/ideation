@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const handleClick = (preset: any) => {
+  const handleClick = (preset: { id: string }) => {
     const params = new URLSearchParams(searchParams);
     params.set('template', preset.id);
     router.push(`/ideating?${params.toString()}`);
@@ -109,7 +109,7 @@ export default function Home() {
               </div>
               <h4 className="md:text-xl text-lg font-semibold text-foreground">Define Purpose and Context</h4>
               <p className="text-sm md:text-[17px] text-sub-foreground">
-                Start with your goal and context. Tell us as much as you can about what you're trying to achieve and set your criteria for our AI.
+                Start with your goal and context. Tell us as much as you can about what you&apos;re trying to achieve and set your criteria for our AI.
               </p>
             </div>
             
@@ -119,7 +119,7 @@ export default function Home() {
               </div>
               <h4 className="md:text-xl text-lg font-semibold text-foreground">AI Ideation and Prototyping</h4>
               <div className="text-sm md:text-[17px] text-sub-foreground">
-                Get X amount of diverse, scored ideas tailored to your criteria and context. We'll use your preferences to refine the ideas.
+                Get X amount of diverse, scored ideas tailored to your criteria and context. We&apos;ll use your preferences to refine the ideas.
               </div>
             </div>
             
