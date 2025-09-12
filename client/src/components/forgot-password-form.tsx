@@ -14,9 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 
-export function ForgotPasswordForm({
+function ForgotPasswordFormContent({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
@@ -105,5 +105,13 @@ export function ForgotPasswordForm({
         </Card>
       )}
     </div>
+  );
+}
+
+export function ForgotPasswordForm(props: React.ComponentPropsWithoutRef<"div">) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ForgotPasswordFormContent {...props} />
+    </Suspense>
   );
 }

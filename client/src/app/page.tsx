@@ -1,11 +1,13 @@
 "use client";
 
+import { Suspense } from "react";
 import { presets } from "@/data/constants";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter, useSearchParams } from "next/navigation";
-export default function Home() {
+
+function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const handleClick = (preset: { id: string }) => {
@@ -134,7 +136,15 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
-    </div>
+       </section>
+     </div>
+   );
+ }
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
