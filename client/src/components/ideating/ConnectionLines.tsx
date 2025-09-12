@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { calculateCanvasBounds, lineIntersectsRect, PANEL_DIMENSIONS } from './types';
+import { calculateCanvasBounds, lineIntersectsRect, PANEL_DIMENSIONS, PanelType } from './types';
 
 export interface Connection {
   id: string;
@@ -36,7 +36,7 @@ export default function ConnectionLines({
   const canvasBounds = useMemo(() => {
     const panels = Object.entries(panelPositions).map(([id, pos]) => ({
       id,
-      type: 'unknown' as any,
+      type: 'context-input' as PanelType,
       iterationNumber: 0,
       position: pos,
       isActive: false,

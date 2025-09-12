@@ -24,11 +24,22 @@ import IdeaGenerationPanel from '@/components/ideating/IdeaGenerationPanel';
 import RankingPanel from '@/components/ideating/RankingPanel';
 import SchemaRefinementPanel from '@/components/ideating/SchemaRefinementPanel';
 
-import { PanelInstance } from '@/components/ideating/types';
+import { PanelInstance, WorkflowIteration } from '@/components/ideating/types';
 import { IdeaSchema } from '@/actions/serverActions';
 
+// Define the data type for custom nodes
+interface CustomNodeData {
+  panel: PanelInstance;
+  onContextComplete: (data: { context: string; purpose: string; preferences: string; id?: string }, generatedSchema: IdeaSchema) => void;
+  onSchemaComplete: (updatedSchema: IdeaSchema) => void;
+  onIdeasGenerated: (generatedIdeas: { idea: string; description: string; evaluation: string }[]) => void;
+  onRankingComplete: (ideaRankings: Record<string, number>) => void;
+  onSchemaRefined: (refinedSchema: IdeaSchema) => void;
+  iterations: WorkflowIteration[];
+}
+
 // Custom node component wrapper
-const CustomNodeWrapper = ({ data }: { data: any }) => {
+const CustomNodeWrapper = ({ data }: { data: CustomNodeData }) => {
   const { panel, onContextComplete, onSchemaComplete, onIdeasGenerated, onRankingComplete, onSchemaRefined, iterations } = data;
   
   const renderPanelContent = () => {
@@ -125,7 +136,7 @@ interface XyFlowCanvasProps {
     iterationFrom: number;
     iterationTo: number;
   }>;
-  iterations: any[];
+  iterations: WorkflowIteration[];
   onContextComplete: (data: { context: string; purpose: string; preferences: string; id?: string }, generatedSchema: IdeaSchema) => void;
   onSchemaComplete: (updatedSchema: IdeaSchema) => void;
   onIdeasGenerated: (generatedIdeas: { idea: string; description: string; evaluation: string }[]) => void;
