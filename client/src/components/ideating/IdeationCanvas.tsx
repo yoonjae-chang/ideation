@@ -5,7 +5,7 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { DndContext, DragEndEvent, useSensor, useSensors, PointerSensor, DragStartEvent, DragMoveEvent } from '@dnd-kit/core';
 import { AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ZoomIn, ZoomOut, RotateCcw, Save } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { IdeaSchema } from '@/actions/serverActions';
 
 // Import panel components
@@ -26,7 +26,8 @@ import {
   Connection,
   generatePanelId,
   generateConnectionId,
-  calculateIterationPosition
+  calculateIterationPosition,
+  calculateNextPanelPosition
 } from '@/components/ideating/types';
 
 interface IdeationCanvasProps {
@@ -183,7 +184,8 @@ export default function IdeationCanvas({ }: IdeationCanvasProps) {
     if (!currentPanel) return;
 
     const nextPanelId = generatePanelId(nextType, currentPanel.iterationNumber);
-    const nextPosition = calculateIterationPosition(currentPanel.iterationNumber, nextType);
+    // Use calculateNextPanelPosition to place new panels to the right of current panel
+    const nextPosition = calculateNextPanelPosition(currentPanel);
 
     const nextPanel: PanelInstance = {
       id: nextPanelId,
@@ -352,10 +354,10 @@ export default function IdeationCanvas({ }: IdeationCanvasProps) {
   }, [activePanel, currentIteration, iterations, createNewIteration]);
 
   // Canvas controls
-  const handleSaveSession = useCallback(async () => {
-    // TODO: Implement save functionality
-    console.log('Saving session...');
-  }, []);
+  // const handleSaveSession = useCallback(async () => {
+  //   // TODO: Implement save functionality
+  //   console.log('Saving session...');
+  // }, []);
 
   // Show loading state during hydration
   if (!isMounted) {
@@ -385,12 +387,12 @@ export default function IdeationCanvas({ }: IdeationCanvasProps) {
 
 
       {/* Canvas Controls */}
-      <div className="absolute top-4 right-4 z-50 flex gap-2">
+      {/* <div className="absolute top-4 right-4 z-50 flex gap-2">
         <Button variant="outline" size="lg" onClick={handleSaveSession}>
           <Save className="" />
           Save
         </Button>
-      </div>
+      </div> */}
 
       {/* Flow Guide */}
       {/* <FlowGuide currentStep={currentStep} /> */}

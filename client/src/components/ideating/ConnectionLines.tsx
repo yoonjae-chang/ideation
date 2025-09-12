@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
+import { calculateCanvasBounds, lineIntersectsRect, PANEL_DIMENSIONS } from './types';
 
 export interface Connection {
   id: string;
@@ -31,17 +32,68 @@ export default function ConnectionLines({
   scale 
 }: ConnectionLinesProps) {
   
-  // Calculate 90-degree angle path between two points
-  const calculatePath = (from: { x: number; y: number }, to: { x: number; y: number }) => {
-    const midX = from.x + (to.x - from.x) * 0.5;
+  // Calculate dynamic canvas bounds based on panel positions
+  const canvasBounds = useMemo(() => {
+    const panels = Object.entries(panelPositions).map(([id, pos]) => ({
+      id,
+      type: 'unknown' as any,
+      iterationNumber: 0,
+      position: pos,
+      isActive: false,
+      isCompleted: false
+    }));
     
-    // Create 90-degree angle path
+    const panelsRecord = Object.fromEntries(panels.map(p => [p.id, p]));
+    return calculateCanvasBounds(panelsRecord);
+  }, [panelPositions]);
+
+  // Create panel rectangles for collision detection (adjusted to canvas bounds)
+  const panelRects = useMemo(() => {
+    return Object.entries(panelPositions).map(([id, pos]) => ({
+      id,
+      x: pos.x - canvasBounds.minX,
+      y: pos.y - canvasBounds.minY,
+      width: PANEL_DIMENSIONS.width,
+      height: PANEL_DIMENSIONS.height
+    }));
+  }, [panelPositions, canvasBounds]);
+
+  // Smart path calculation with collision avoidance
+  const calculateSmartPath = (from: { x: number; y: number }, to: { x: number; y: number }, excludePanelIds: string[] = []) => {
+    // Filter out the panels we're connecting from/to
+    const obstacles = panelRects.filter(rect => !excludePanelIds.includes(rect.id));
+    
+    // Check if direct path is clear
+    const directPathClear = !obstacles.some(rect => 
+      lineIntersectsRect(from, to, rect)
+    );
+    
+    if (directPathClear) {
+      // Simple 90-degree angle path
+      const midX = from.x + (to.x - from.x) * 0.5;
+      return `M ${from.x} ${from.y} 
+              L ${midX} ${from.y} 
+              L ${midX} ${to.y} 
+              L ${to.x} ${to.y}`;
+    }
+    
+    // Path is blocked, route around obstacles
+    const buffer = 20; // Distance to stay away from panels
+    
+    // Determine if we should route above or below
+    const routeAbove = from.y > to.y;
+    const routeY = routeAbove 
+      ? Math.min(...obstacles.map(r => r.y)) - buffer
+      : Math.max(...obstacles.map(r => r.y + r.height)) + buffer;
+    
+    // Create routed path
     return `M ${from.x} ${from.y} 
-            L ${midX} ${from.y} 
-            L ${midX} ${to.y} 
+            L ${from.x + 50} ${from.y}
+            L ${from.x + 50} ${routeY}
+            L ${to.x - 50} ${routeY}
+            L ${to.x - 50} ${to.y}
             L ${to.x} ${to.y}`;
   };
-
 
   // Get connection points for panels
   const getConnectionPoints = (fromPanelId: string, toPanelId: string) => {
@@ -52,13 +104,13 @@ export default function ConnectionLines({
 
     // Calculate connection points (right side of from panel, left side of to panel)
     const fromPoint = {
-      x: fromPanel.x + 400, // Panel width
-      y: fromPanel.y + 150  // Panel height / 2
+      x: fromPanel.x + PANEL_DIMENSIONS.width, // Panel width
+      y: fromPanel.y + PANEL_DIMENSIONS.height / 2  // Panel height / 2
     };
     
     const toPoint = {
       x: toPanel.x,
-      y: toPanel.y + 150
+      y: toPanel.y + PANEL_DIMENSIONS.height / 2
     };
 
     return { fromPoint, toPoint };
@@ -68,12 +120,13 @@ export default function ConnectionLines({
     <svg
       className="absolute pointer-events-none"
       style={{
-        width: '500vw',
-        height: '500vh',
-        left: 0,
-        top: 0,
+        width: canvasBounds.width,
+        height: canvasBounds.height,
+        left: canvasBounds.minX,
+        top: canvasBounds.minY,
         zIndex: 1,
       }}
+      viewBox={`0 0 ${canvasBounds.width} ${canvasBounds.height}`}
     >
       <defs>
         {/* Arrow marker definition */}
@@ -109,7 +162,17 @@ export default function ConnectionLines({
         if (!connectionPoints) return null;
 
         const { fromPoint, toPoint } = connectionPoints;
-        const path = calculatePath(fromPoint, toPoint);
+        // Adjust coordinates relative to canvas bounds
+        const adjustedFromPoint = {
+          x: fromPoint.x - canvasBounds.minX,
+          y: fromPoint.y - canvasBounds.minY
+        };
+        const adjustedToPoint = {
+          x: toPoint.x - canvasBounds.minX,
+          y: toPoint.y - canvasBounds.minY
+        };
+        
+        const path = calculateSmartPath(adjustedFromPoint, adjustedToPoint, [connection.fromPanelId, connection.toPanelId]);
 
         // Style based on connection type
         const isLoopConnection = connection.type === 'iteration-loop';
@@ -131,21 +194,6 @@ export default function ConnectionLines({
                 strokeDasharray: isLoopConnection ? '5,5' : 'none'
               }}
             />
-            
-            {/* Connection label */}
-            <text
-              x={fromPoint.x + (toPoint.x - fromPoint.x) * 0.5}
-              y={fromPoint.y - 10}
-              fill="#6b7280"
-              fontSize={12 / scale}
-              textAnchor="middle"
-              className="pointer-events-none select-none"
-            >
-              {isLoopConnection 
-                ? `Loop: ${connection.iterationFrom} → ${connection.iterationTo}`
-                : `Step ${connection.iterationFrom}`
-              }
-            </text>
           </g>
         );
       })}
