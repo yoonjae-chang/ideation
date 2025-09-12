@@ -172,7 +172,7 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
           </motion.div>
         )}
 
-        {currentStep === 'complete' && evaluatedIdeas.length > 0 && (
+        {/* {currentStep === 'complete' && evaluatedIdeas.length > 0 && (
           <motion.div
             key="complete"
             initial={{ opacity: 0 }}
@@ -221,7 +221,7 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
               ))}
             </div>
           </motion.div>
-        )}
+        )} */}
       </AnimatePresence>
 
       {/* Error Message */}
@@ -232,7 +232,7 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
       )}
 
       {currentStep === 'complete' && (
-        <div className="text-xs text-gray-500 text-center">
+        <div className="text-md text-gray-500 text-center">
           Next: Rank these ideas from 1-10 to refine your schema
         </div>
       )}

@@ -8,26 +8,30 @@ import { Button } from '@/components/ui/button';
 import { ZoomIn, ZoomOut, RotateCcw, Save } from 'lucide-react';
 import { IdeaSchema } from '@/actions/serverActions';
 
-// Import panel components (we'll create these next)
+// Import panel components
 import ContextInputPanel from '@/components/ideating/ContextInputPanel';
 import SchemaEditorPanel from '@/components/ideating/SchemaEditorPanel';
 import IdeaGenerationPanel from '@/components/ideating/IdeaGenerationPanel';
 import RankingPanel from '@/components/ideating/RankingPanel';
 import SchemaRefinementPanel from '@/components/ideating/SchemaRefinementPanel';
-import FlowGuide from '@/components/ideating/FlowGuide';
 import DraggablePanel from '@/components/ideating/DraggablePanel';
+import ConnectionLines from '@/components/ideating/ConnectionLines';
 
-export type PanelPosition = {
-  x: number;
-  y: number;
-};
-
-export type IdeationStep = 
-  | 'context-input'
-  | 'schema-editing'
-  | 'idea-generation'
-  | 'ranking'
-  | 'schema-refinement';
+// Import types and utilities
+import { 
+  PanelPosition, 
+  PanelType, 
+  PanelInstance, 
+  WorkflowIteration, 
+  Connection,
+  generatePanelId,
+  generateConnectionId,
+  calculateIterationPosition,
+  getNextPanelType,
+  getWorkflowConnections,
+  getLoopConnection,
+  WORKFLOW_SEQUENCE
+} from '@/components/ideating/types';
 
 interface IdeationCanvasProps {
   sessionId?: string;
@@ -37,40 +41,50 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
   // Client-side hydration state
   const [isMounted, setIsMounted] = useState(false);
 
-  // State management
-  const [currentStep, setCurrentStep] = useState<IdeationStep>('context-input');
-  const [sessionData, setSessionData] = useState<{
-    id?: string;
-    context: string;
-    purpose: string;
-    preferences: string;
-  }>({
-    context: '',
-    purpose: '',
-    preferences: ''
-  });
+  // New iteration-based state management
+  const [iterations, setIterations] = useState<WorkflowIteration[]>([]);
+  const [allPanels, setAllPanels] = useState<Record<string, PanelInstance>>({});
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [currentIteration, setCurrentIteration] = useState(0);
+  const [activePanel, setActivePanel] = useState<string | null>(null);
   
-  const [schema, setSchema] = useState<IdeaSchema | null>(null);
-  const [ideas, setIdeas] = useState<any[]>([]);
-  const [rankings, setRankings] = useState<Record<string, number>>({});
-  const [schemaVersions, setSchemaVersions] = useState<any[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragOffsets, setDragOffsets] = useState<Record<string, PanelPosition>>({});
   const [currentScale, setCurrentScale] = useState(1);
 
   // Ensure component only renders after client-side hydration
   useEffect(() => {
     setIsMounted(true);
+    // Initialize first iteration
+    initializeFirstIteration();
   }, []);
 
-  // Panel positions - arranged in a guided flow
-  const [panelPositions, setPanelPositions] = useState<Record<string, PanelPosition>>({
-    'context-input': { x: 100, y: 100 },
-    'schema-editing': { x: 600, y: 100 },
-    'idea-generation': { x: 1100, y: 100 },
-    'ranking': { x: 100, y: 500 },
-    'schema-refinement': { x: 600, y: 500 }
-  });
+  // Initialize the first iteration with context input panel
+  const initializeFirstIteration = useCallback(() => {
+    const contextPanelId = generatePanelId('context-input', 0);
+    const contextPosition = calculateIterationPosition(0, 'context-input');
+    
+    const contextPanel: PanelInstance = {
+      id: contextPanelId,
+      type: 'context-input',
+      iterationNumber: 0,
+      position: contextPosition,
+      isActive: true,
+      isCompleted: false,
+      data: null
+    };
+
+    const firstIteration: WorkflowIteration = {
+      iterationNumber: 0,
+      panels: [contextPanel],
+      connections: [],
+      isActive: true,
+      isCompleted: false
+    };
+
+    setIterations([firstIteration]);
+    setAllPanels({ [contextPanelId]: contextPanel });
+    setActivePanel(contextPanelId);
+  }, []);
 
   // Drag and drop sensors with improved settings
   const sensors = useSensors(
@@ -93,9 +107,9 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
     // Store the initial position when drag starts
     setInitialDragPositions(prev => ({
       ...prev,
-      [panelId]: panelPositions[panelId]
+      [panelId]: allPanels[panelId]?.position || { x: 0, y: 0 }
     }));
-  }, [panelPositions]);
+  }, [allPanels]);
 
   // Handle panel drag move (real-time updates)
   const handleDragMove = useCallback((event: DragMoveEvent) => {
@@ -110,13 +124,22 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
         y: delta.y / currentScale
       };
       
-      setPanelPositions(prev => ({
+      const newPosition = {
+        x: initialPos.x + scaledDelta.x,
+        y: initialPos.y + scaledDelta.y
+      };
+
+      // Update panel position
+      setAllPanels(prev => ({
         ...prev,
         [panelId]: {
-          x: initialPos.x + scaledDelta.x,
-          y: initialPos.y + scaledDelta.y
+          ...prev[panelId],
+          position: newPosition
         }
       }));
+
+      // Update connections in real-time
+      updateConnectionsForPanel(panelId, newPosition);
     }
   }, [initialDragPositions, currentScale]);
 
@@ -134,33 +157,203 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
     setIsDragging(false);
   }, []);
 
-  // Step progression handlers
-  const handleContextComplete = useCallback((data: typeof sessionData, generatedSchema: IdeaSchema) => {
-    setSessionData(data);
-    setSchema(generatedSchema);
-    setCurrentStep('schema-editing');
+  // Update connections when a panel is moved
+  const updateConnectionsForPanel = useCallback((panelId: string, newPosition: PanelPosition) => {
+    setConnections(prev => prev.map(conn => {
+      if (conn.fromPanelId === panelId) {
+        return {
+          ...conn,
+          fromPoint: {
+            x: newPosition.x + 400, // Panel width
+            y: newPosition.y + 150  // Panel height / 2
+          }
+        };
+      } else if (conn.toPanelId === panelId) {
+        return {
+          ...conn,
+          toPoint: {
+            x: newPosition.x,
+            y: newPosition.y + 150
+          }
+        };
+      }
+      return conn;
+    }));
   }, []);
+
+  // Create next panel in workflow
+  const createNextPanel = useCallback((currentPanelId: string, nextType: PanelType, data?: any) => {
+    const currentPanel = allPanels[currentPanelId];
+    if (!currentPanel) return;
+
+    const nextPanelId = generatePanelId(nextType, currentPanel.iterationNumber);
+    const nextPosition = calculateIterationPosition(currentPanel.iterationNumber, nextType);
+
+    const nextPanel: PanelInstance = {
+      id: nextPanelId,
+      type: nextType,
+      iterationNumber: currentPanel.iterationNumber,
+      position: nextPosition,
+      isActive: true,
+      isCompleted: false,
+      data
+    };
+
+    // Mark current panel as completed
+    setAllPanels(prev => ({
+      ...prev,
+      [currentPanelId]: { ...prev[currentPanelId], isActive: false, isCompleted: true },
+      [nextPanelId]: nextPanel
+    }));
+
+    // Update iteration
+    setIterations(prev => prev.map(iter => {
+      if (iter.iterationNumber === currentPanel.iterationNumber) {
+        return {
+          ...iter,
+          panels: [...iter.panels, nextPanel]
+        };
+      }
+      return iter;
+    }));
+
+    // Create connection between panels
+    const connection: Connection = {
+      id: generateConnectionId(currentPanelId, nextPanelId),
+      fromPanelId: currentPanelId,
+      toPanelId: nextPanelId,
+      fromPoint: {
+        x: currentPanel.position.x + 400,
+        y: currentPanel.position.y + 150
+      },
+      toPoint: {
+        x: nextPosition.x,
+        y: nextPosition.y + 150
+      },
+      iterationFrom: currentPanel.iterationNumber,
+      iterationTo: currentPanel.iterationNumber,
+      type: 'workflow'
+    };
+
+    setConnections(prev => [...prev, connection]);
+    setActivePanel(nextPanelId);
+  }, [allPanels]);
+
+  // Create new iteration (loop back)
+  const createNewIteration = useCallback((refinedSchema: IdeaSchema, previousIterationData: any) => {
+    const newIterationNumber = currentIteration + 1;
+    
+    // Create schema editing panel for new iteration
+    const schemaEditPanelId = generatePanelId('schema-editing', newIterationNumber);
+    const schemaEditPosition = calculateIterationPosition(newIterationNumber, 'schema-editing');
+
+    const schemaEditPanel: PanelInstance = {
+      id: schemaEditPanelId,
+      type: 'schema-editing',
+      iterationNumber: newIterationNumber,
+      position: schemaEditPosition,
+      isActive: true,
+      isCompleted: false,
+      data: { schema: refinedSchema, previousData: previousIterationData }
+    };
+
+    const newIteration: WorkflowIteration = {
+      iterationNumber: newIterationNumber,
+      panels: [schemaEditPanel],
+      connections: [],
+      schema: refinedSchema,
+      isActive: true,
+      isCompleted: false
+    };
+
+    // Add new iteration and panel
+    setIterations(prev => [...prev, newIteration]);
+    setAllPanels(prev => ({
+      ...prev,
+      [schemaEditPanelId]: schemaEditPanel
+    }));
+
+    // Create loop connection from previous iteration's schema refinement to new schema editing
+    const previousIteration = iterations[currentIteration];
+    const refinementPanel = previousIteration?.panels.find(p => p.type === 'schema-refinement');
+    
+    if (refinementPanel) {
+      const loopConnection: Connection = {
+        id: generateConnectionId(refinementPanel.id, schemaEditPanelId),
+        fromPanelId: refinementPanel.id,
+        toPanelId: schemaEditPanelId,
+        fromPoint: {
+          x: refinementPanel.position.x + 400,
+          y: refinementPanel.position.y + 150
+        },
+        toPoint: {
+          x: schemaEditPosition.x,
+          y: schemaEditPosition.y + 150
+        },
+        iterationFrom: currentIteration,
+        iterationTo: newIterationNumber,
+        type: 'iteration-loop'
+      };
+
+      setConnections(prev => [...prev, loopConnection]);
+    }
+
+    setCurrentIteration(newIterationNumber);
+    setActivePanel(schemaEditPanelId);
+  }, [currentIteration, iterations]);
+
+  // Step progression handlers
+  const handleContextComplete = useCallback((data: any, generatedSchema: IdeaSchema) => {
+    if (!activePanel) return;
+    
+    // Update current iteration with session data and schema
+    setIterations(prev => prev.map(iter => {
+      if (iter.iterationNumber === 0) {
+        return { ...iter, sessionData: data, schema: generatedSchema };
+      }
+      return iter;
+    }));
+
+    createNextPanel(activePanel, 'schema-editing', { schema: generatedSchema, sessionData: data });
+  }, [activePanel, createNextPanel]);
 
   const handleSchemaComplete = useCallback((updatedSchema: IdeaSchema) => {
-    setSchema(updatedSchema);
-    setCurrentStep('idea-generation');
-  }, []);
+    if (!activePanel) return;
+    createNextPanel(activePanel, 'idea-generation', { schema: updatedSchema });
+  }, [activePanel, createNextPanel]);
 
   const handleIdeasGenerated = useCallback((generatedIdeas: any[]) => {
-    setIdeas(generatedIdeas);
-    setCurrentStep('ranking');
-  }, []);
+    if (!activePanel) return;
+    createNextPanel(activePanel, 'ranking', { ideas: generatedIdeas });
+  }, [activePanel, createNextPanel]);
 
   const handleRankingComplete = useCallback((ideaRankings: Record<string, number>) => {
-    setRankings(ideaRankings);
-    setCurrentStep('schema-refinement');
-  }, []);
+    if (!activePanel) return;
+    
+    // Get the current iteration's schema and ideas for schema refinement
+    const currentPanel = allPanels[activePanel];
+    const currentIterationData = iterations[currentPanel.iterationNumber];
+    
+    createNextPanel(activePanel, 'schema-refinement', { 
+      rankings: ideaRankings,
+      schema: currentIterationData?.schema,
+      ideas: currentPanel.data?.ideas || []
+    });
+  }, [activePanel, createNextPanel, allPanels, iterations]);
 
   const handleSchemaRefined = useCallback((refinedSchema: IdeaSchema) => {
-    setSchema(refinedSchema);
-    setSchemaVersions(prev => [...prev, refinedSchema]);
-    setCurrentStep('idea-generation'); // Loop back to generate new ideas
-  }, []);
+    if (!activePanel) return;
+    
+    // Mark current panel as completed
+    setAllPanels(prev => ({
+      ...prev,
+      [activePanel]: { ...prev[activePanel], isActive: false, isCompleted: true }
+    }));
+
+    // Create new iteration automatically
+    const currentIterationData = iterations[currentIteration];
+    createNewIteration(refinedSchema, currentIterationData);
+  }, [activePanel, currentIteration, iterations, createNewIteration]);
 
   // Canvas controls
   const handleSaveSession = useCallback(async () => {
@@ -249,87 +442,90 @@ export default function IdeationCanvas({ sessionId }: IdeationCanvasProps) {
                 onDragMove={handleDragMove}
                 onDragEnd={handleDragEnd}
               >
-                {/* Canvas Content Area */}
-                <div className="relative w-full h-full min-w-[200vw] min-h-[200vh]">
+                {/* Canvas Content Area - Infinitely Large */}
+                <div className="relative w-full h-full min-w-[500vw] min-h-[500vh]">
+                  
+                  {/* Connection Lines */}
+                  <ConnectionLines 
+                    connections={connections}
+                    panelPositions={Object.fromEntries(
+                      Object.entries(allPanels).map(([id, panel]) => [id, panel.position])
+                    )}
+                    scale={currentScale}
+                  />
 
-                {/* Panels */}
-                <AnimatePresence mode="wait">
-                  {/* Context Input Panel */}
-                  <DraggablePanel
-                    key="context-input-panel"
-                    id="context-input"
-                    position={panelPositions['context-input']}
-                    isActive={currentStep === 'context-input'}
-                  >
-                    <ContextInputPanel
-                      onComplete={handleContextComplete}
-                      sessionData={sessionData}
-                    />
-                  </DraggablePanel>
+                  {/* Render All Panels from All Iterations */}
+                  <AnimatePresence>
+                    {Object.values(allPanels).map((panel) => {
+                      const renderPanelContent = () => {
+                        switch (panel.type) {
+                          case 'context-input':
+                            return (
+                              <ContextInputPanel
+                                onComplete={handleContextComplete}
+                                sessionData={panel.data?.sessionData || { context: '', purpose: '', preferences: '' }}
+                              />
+                            );
+                          
+                          case 'schema-editing':
+                            return (
+                              <SchemaEditorPanel
+                                schema={panel.data?.schema}
+                                onComplete={handleSchemaComplete}
+                              />
+                            );
+                          
+                          case 'idea-generation':
+                            return (
+                              <IdeaGenerationPanel
+                                schema={panel.data?.schema}
+                                onComplete={handleIdeasGenerated}
+                              />
+                            );
+                          
+                          case 'ranking':
+                            return (
+                              <RankingPanel
+                                ideas={panel.data?.ideas || []}
+                                rankings={panel.data?.rankings || {}}
+                                onComplete={handleRankingComplete}
+                              />
+                            );
+                          
+                          case 'schema-refinement':
+                            // Get schema from current iteration if not in panel data
+                            const currentIteration = iterations[panel.iterationNumber];
+                            const schemaToUse = panel.data?.schema || currentIteration?.schema;
+                            
+                            return (
+                              <SchemaRefinementPanel
+                                schema={schemaToUse}
+                                rankings={panel.data?.rankings || {}}
+                                ideas={panel.data?.ideas || []}
+                                onComplete={handleSchemaRefined}
+                              />
+                            );
+                          
+                          default:
+                            return <div>Unknown panel type</div>;
+                        }
+                      };
 
-                  {/* Schema Editor Panel */}
-                  {schema && (
-                    <DraggablePanel
-                      key="schema-editing-panel"
-                      id="schema-editing"
-                      position={panelPositions['schema-editing']}
-                      isActive={currentStep === 'schema-editing'}
-                    >
-                      <SchemaEditorPanel
-                        schema={schema}
-                        onComplete={handleSchemaComplete}
-                      />
-                    </DraggablePanel>
-                  )}
-
-                  {/* Idea Generation Panel */}
-                  {currentStep === 'idea-generation' && schema && (
-                    <DraggablePanel
-                      key="idea-generation-panel"
-                      id="idea-generation"
-                      position={panelPositions['idea-generation']}
-                      isActive={currentStep === 'idea-generation'}
-                    >
-                      <IdeaGenerationPanel
-                        schema={schema}
-                        onComplete={handleIdeasGenerated}
-                      />
-                    </DraggablePanel>
-                  )}
-
-                  {/* Ranking Panel */}
-                  {ideas.length > 0 && (
-                    <DraggablePanel
-                      key="ranking-panel"
-                      id="ranking"
-                      position={panelPositions['ranking']}
-                      isActive={currentStep === 'ranking'}
-                    >
-                      <RankingPanel
-                        ideas={ideas}
-                        rankings={rankings}
-                        onComplete={handleRankingComplete}
-                      />
-                    </DraggablePanel>
-                  )}
-
-                  {/* Schema Refinement Panel */}
-                  {currentStep === 'schema-refinement' && schema && Object.keys(rankings).length > 0 && (
-                    <DraggablePanel
-                      key="schema-refinement-panel"
-                      id="schema-refinement"
-                      position={panelPositions['schema-refinement']}
-                      isActive={currentStep === 'schema-refinement'}
-                    >
-                      <SchemaRefinementPanel
-                        schema={schema}
-                        rankings={rankings}
-                        ideas={ideas}
-                        onComplete={handleSchemaRefined}
-                      />
-                    </DraggablePanel>
-                  )}
-                </AnimatePresence>
+                      return (
+                        <DraggablePanel
+                          key={panel.id}
+                          id={panel.id}
+                          position={panel.position}
+                          isActive={panel.isActive}
+                          isCompleted={panel.isCompleted}
+                          iterationNumber={panel.iterationNumber}
+                          panelType={panel.type}
+                        >
+                          {renderPanelContent()}
+                        </DraggablePanel>
+                      );
+                    })}
+                  </AnimatePresence>
                 </div>
               </DndContext>
             </TransformComponent>
