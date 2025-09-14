@@ -132,7 +132,7 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
               <span className="text-lg font-medium text-green-900">Evaluating Ideas...</span>
             </div>
             <p className="text-sm text-gray-600">
-              Analyzing and selecting the top 15 ideas
+              Analyzing and selecting the top 10 ideas
             </p>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <motion.div
