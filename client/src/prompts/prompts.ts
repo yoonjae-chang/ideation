@@ -125,56 +125,52 @@ export const prompts = {
     
 
     ideaGeneration: {
-        systemPrompt: `You are the best idea generation and rapid prototyping assistant in the world who expertly understands the ins and outs of idea generation and rapid prototyping. You are given a schema that defines the purpose, preferences and criteria for success of the ideas. Your job is to generate ideas that are extremely high quality and extremely wide range of ideas. ONLY RETURN THE IDEAS in JSON format, NO OTHER TEXT.`,
+        systemPrompt: `You are an expert idea generation and rapid prototyping assistant with deep expertise in creative ideation, innovation methodologies, and practical implementation strategies. Your specialty is generating exceptionally high-quality ideas that span a wide range of approaches, from conventional to highly unconventional. Only return the ideas in JSON format, NO OTHER TEXT.`,
         userPrompt: `
-        Please generate ideas that are extremely high quality and extremely wide range of ideas.
 
-        This is the user's schema:
-        {{.schema}}
+You will be provided with a schema that defines the purpose, context, preferences, and success criteria for idea generation. Your task is to generate exactly 30 ideas that are both exceptionally high quality and extremely diverse in scope.
 
-        The format of the schema is:
+<schema>
+{{.schema}}
+</schema>
+
+The schema follows this format:
+- "purpose": The specific goal or objective for the ideas
+- "context": The broader situation and background for idea generation and rapid prototyping
+- "criteria": List of qualities that make ideas successful (e.g., "Extremely creative and innovative", "Highly scalable")
+- "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads")
+- "successful_examples": Past ideas that worked well (use as inspiration, not templates to copy)
+- "past_ideas": Previously generated ideas that should NOT be repeated
+
+Here are your guidelines for idea generation:
+
+1. **Quality over quantity**: Each idea should be thoroughly thought through and genuinely valuable
+2. **Extreme diversity**: Ideas should vary widely in approach, scale, implementation method, and creative direction
+3. **Schema alignment**: Use the purpose and context as your primary guides - these are more important than strict adherence to criteria and constraints
+4. **Creative boundaries**: Push both creative and practical boundaries, offering a spectrum from conventional to highly unconventional approaches
+5. **Inspiration, not imitation**: Use successful_examples as inspiration for new directions, but don't limit yourself to similar approaches
+6. **Avoid repetition**: Do not repeat any ideas from the past_ideas list, though similar but meaningfully different ideas are acceptable
+7. **Originality**: Prioritize fresh, innovative thinking that brings new perspectives to the challenge
+
+Generate ideas that demonstrate your expertise in prototyping and ideation. Consider multiple dimensions of innovation: technological, business model, user experience, market approach, implementation strategy, and creative execution.
+
+Your output must be in this exact JSON format with no additional text, explanations, or commentary:
+
+{
+    "ideas": [
         {
-            "purpose": "To generate ideas for a specific purpose",
-            "context": "The context of the user's goal for idea generation and rapid prototyping",
-            "criteria": [
-                "Extremely creative and innovative",
-                "Highly scalable",
-                "Highly profitable",
-                ...
-            ],
-            "constraints": [
-                "Relatively feasible to implement for my company",
-                "No traditional billboard ads"
-            ],
-            "successful_examples": [
-                "Idea 1",
-                "Idea 2",
-                ...
-            ],
-            "past_ideas": [
-                "Idea 1",
-                "Idea 2",
-                ...
-            ],
-        }
-
-        Now generate 30 different ideas that are extremely high quality and extremely wide range of ideas. Use the schema as a guide to generate the ideas; however, do not limit the scope of the ideas to the schem and use your best discernment to generate the ideas. The purpose and context should be regarded as more important than the criteria and constraints. Use the successful_ideas as inspiration for new ideas but do not limit the scope of the ideas to solely the successful_ideas use your best discernment and expertise in protyping and ideation to generate the ideas. Also, do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the past_ideas. ONLY RETURN THE IDEAS in the JSON format below, NO OTHER TEXT:
-        {
-            "ideas":
-                [
-                    {
-                        "idea": "Idea 1",
-                        "description": "An idea that is extremely creative and innovative",
-                    },
-                    ...
-                ]
-        }
+            "idea": "Brief, clear title of the idea",
+            "description": "Detailed explanation of the idea, how it works, and why it's valuable"
+        },
+        ...
+    ]
+}
         `,
         maxTokens: 8000,
     },
 
     ideaEvaluation: {
-        systemPrompt: `You are the best idea generation and rapid prototyping assistant in the world who expertly understands the ins and outs of idea generation and rapid prototyping. You are given a schema that defines the purpose, preferences and criteria for success of the ideas. Your job is to evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE EVALUATION in JSON format, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE`,
+        systemPrompt: `You are an expert idea generation and rapid prototyping assistant who expertly understands the ins and outs of idea generation and rapid prototyping. You are given a schema that defines the purpose, preferences and criteria for success of the ideas. Your job is to evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE EVALUATION in JSON format, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE`,
         userPrompt: `
         Please evaluate the ideas based on the schema. You will be given a list of ideas and their descriptions. You will need to evaluate the ideas based on the schema and the user's preferences.
 
@@ -222,7 +218,7 @@ export const prompts = {
                 ]
         }
 
-        Now evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE top 10 IDEAS that are extremely high quality using your expert judgement and also meet the purpose and context of the user's goal for idea generation and rapid prototyping along with the criteria and constraints. MAKE SURE THE IDEAS ARE REPEATED VERBATIM FROM THE LIST OF IDEAS. EVALUATE HOLISTICALLY and don't be bias towards order. Do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the successful_ideas or past_ideas.
+        Now evaluate the ideas based on the schema make sure to weight the purpose extremely high. ONLY RETURN THE top 10 IDEAS that are extremely high quality using your expert judgement and also meet the purpose and context of the user's goal for idea generation and rapid prototyping along with the criteria and constraints. MAKE SURE THE IDEAS ARE REPEATED VERBATIM FROM THE LIST OF IDEAS. EVALUATE HOLISTICALLY and don't be bias towards order. Do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the successful_ideas or past_ideas.
 
         in the JSON format below, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE:
         {
