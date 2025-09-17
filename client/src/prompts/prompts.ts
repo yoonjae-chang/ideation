@@ -66,7 +66,8 @@ export const prompts = {
             ],
             "constraints": [
                 "Relatively feasible to implement for my company",
-                "No traditional billboard ads"
+                "No traditional billboard ads",
+                "Not too funny and more serious"
             ]
         }
 
@@ -103,7 +104,8 @@ export const prompts = {
             ],
             "constraints": [
                 "Relatively feasible to implement for my company",
-                "No traditional billboard ads"
+                "No traditional billboard ads",
+                "Not too funny and more serious"
             ],
             "successful_ideas": [
                 "Idea 1",
@@ -125,7 +127,7 @@ export const prompts = {
     
 
     ideaGeneration: {
-        systemPrompt: `You are an expert idea generation and rapid prototyping assistant with deep expertise in creative ideation, innovation methodologies, and practical implementation strategies. Your specialty is generating exceptionally high-quality ideas that span a wide range of approaches, from conventional to highly unconventional. Only return the ideas in JSON format, NO OTHER TEXT.`,
+        systemPrompt: `You are an expert idea generation and rapid prototyping assistant with deep expertise in creative ideation. Your specialty is generating exceptionally high-quality ideas that span a wide range of approaches, from conventional to highly unconventional. Only return the ideas in JSON format, NO OTHER TEXT.`,
         userPrompt: `
 
 You will be provided with a schema that defines the purpose, context, preferences, and success criteria for idea generation. Your task is to generate exactly 30 ideas that are both exceptionally high quality and extremely diverse in scope.
@@ -138,21 +140,21 @@ The schema follows this format:
 - "purpose": The specific goal or objective for the ideas generation and rapid prototyping. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.
 - "context": The broader situation and background for idea generation and rapid prototyping
 - "criteria": List of qualities that make ideas successful (e.g., "Extremely creative and innovative", "Highly scalable")
-- "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads")
+- "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads", "Not too funny and more serious")
 - "successful_examples": Past ideas that worked well (use as inspiration, not templates to copy)
 - "past_ideas": Previously generated ideas that should NOT be repeated
 
 Here are your guidelines for idea generation:
 
 1. **Quality over quantity**: Each idea should be thoroughly thought through and genuinely valuable
-2. **Extreme diversity**: Ideas should vary widely in approach, scale, implementation method, and creative direction
+2. **Extreme diversity**: Ideas should vary widely in direction and approach
 3. **Schema alignment**: Use the purpose and context as your primary guides - these are more important than strict adherence to criteria and constraints. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.
 4. **Creative boundaries**: Push both creative and practical boundaries, offering a spectrum from conventional to highly unconventional approaches
 5. **Inspiration, not imitation**: Use successful_examples as inspiration for new directions, but don't limit yourself to similar approaches
 6. **Avoid repetition**: Do not repeat any ideas from the past_ideas list, though similar but meaningfully different ideas are acceptable
 7. **Originality**: Prioritize fresh, innovative thinking that brings new perspectives to the challenge
 
-Generate ideas that demonstrate your expertise in prototyping and ideation. Consider multiple dimensions of innovation: technological, business model, user experience, market approach, implementation strategy, and creative execution.
+Generate ideas that demonstrate your expertise in prototyping and ideation. 
 
 Your output must be in this exact JSON format with no additional text, explanations, or commentary:
 
@@ -183,7 +185,7 @@ Your output must be in this exact JSON format with no additional text, explanati
         - "purpose": The specific goal or objective for the ideas generation and rapid prototyping. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN EVALUATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas evaluated should be in accordance to the purpose.
         - "context": The broader situation and background for idea generation and rapid prototyping
         - "criteria": List of qualities that make ideas successful (e.g., "Extremely creative and innovative", "Highly scalable")
-        - "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads")
+        - "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads", "Not too funny and more serious")
         - "successful_examples": Past ideas that worked well (use as inspiration, not templates to copy)
         - "past_ideas": Previously generated ideas that should NOT be repeated
         
