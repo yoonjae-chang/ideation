@@ -135,7 +135,7 @@ You will be provided with a schema that defines the purpose, context, preference
 </schema>
 
 The schema follows this format:
-- "purpose": The specific goal or objective for the ideas
+- "purpose": The specific goal or objective for the ideas generation and rapid prototyping. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.
 - "context": The broader situation and background for idea generation and rapid prototyping
 - "criteria": List of qualities that make ideas successful (e.g., "Extremely creative and innovative", "Highly scalable")
 - "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads")
@@ -146,7 +146,7 @@ Here are your guidelines for idea generation:
 
 1. **Quality over quantity**: Each idea should be thoroughly thought through and genuinely valuable
 2. **Extreme diversity**: Ideas should vary widely in approach, scale, implementation method, and creative direction
-3. **Schema alignment**: Use the purpose and context as your primary guides - these are more important than strict adherence to criteria and constraints
+3. **Schema alignment**: Use the purpose and context as your primary guides - these are more important than strict adherence to criteria and constraints. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.
 4. **Creative boundaries**: Push both creative and practical boundaries, offering a spectrum from conventional to highly unconventional approaches
 5. **Inspiration, not imitation**: Use successful_examples as inspiration for new directions, but don't limit yourself to similar approaches
 6. **Avoid repetition**: Do not repeat any ideas from the past_ideas list, though similar but meaningfully different ideas are acceptable
@@ -172,37 +172,21 @@ Your output must be in this exact JSON format with no additional text, explanati
     ideaEvaluation: {
         systemPrompt: `You are an expert idea generation and rapid prototyping assistant who expertly understands the ins and outs of idea generation and rapid prototyping. You are given a schema that defines the purpose, preferences and criteria for success of the ideas. Your job is to evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE EVALUATION in JSON format, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE`,
         userPrompt: `
-        Please evaluate the ideas based on the schema. You will be given a list of ideas and their descriptions. You will need to evaluate the ideas based on the schema and the user's preferences.
+        Please evaluate the ideas based on the schema. You will be given a list of ideas and their descriptions. You will need to evaluate the ideas based on the schema and the user's preferences. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN EVALUATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas evaluate should be in accordance to the purpose.
 
         This is the user's schema:
+        <schema>
         {{.schema}}
-        
-        The format of the schema is:
-        {
-            "purpose": "To generate ideas for a specific purpose",
-            "context": "The context of the user's goal for idea generation and rapid prototyping",
-            "criteria": [
-                "Extremely creative and innovative",
-                "Highly scalable",
-                "Highly profitable",
-                ...
-            ],
-            "constraints": [
-                "Relatively feasible to implement for my company",
-                "No traditional billboard ads"
-            ],
-            "successful_ideas": [
-                "Idea 1",
-                "Idea 2",
-                ...
-            ],
-            "past_ideas": [
-                "Idea 1",
-                "Idea 2",
-                ...
-            ],
-        }
+        </schema>
 
+        The schema follows this format:
+        - "purpose": The specific goal or objective for the ideas generation and rapid prototyping. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN EVALUATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas evaluated should be in accordance to the purpose.
+        - "context": The broader situation and background for idea generation and rapid prototyping
+        - "criteria": List of qualities that make ideas successful (e.g., "Extremely creative and innovative", "Highly scalable")
+        - "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads")
+        - "successful_examples": Past ideas that worked well (use as inspiration, not templates to copy)
+        - "past_ideas": Previously generated ideas that should NOT be repeated
+        
         This is the list of ideas and their descriptions:
         {{.ideas}}
 
@@ -218,7 +202,7 @@ Your output must be in this exact JSON format with no additional text, explanati
                 ]
         }
 
-        Now evaluate the ideas based on the schema make sure to weight the purpose extremely high. ONLY RETURN THE top 10 IDEAS that are extremely high quality using your expert judgement and also meet the purpose and context of the user's goal for idea generation and rapid prototyping along with the criteria and constraints. MAKE SURE THE IDEAS ARE REPEATED VERBATIM FROM THE LIST OF IDEAS. EVALUATE HOLISTICALLY and don't be bias towards order. Do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the successful_ideas or past_ideas.
+        Now evaluate the ideas based on the schema make sure to weight the purpose extremely high. ONLY RETURN THE top 10 IDEAS that are extremely high quality using your expert judgement and also meet the purpose and context of the user's goal for idea generation and rapid prototyping along with the criteria and constraints. Especially be careful to make sure the ideas are in accordance to the purpose as in don't skew the purpose. MAKE SURE THE IDEAS ARE REPEATED VERBATIM FROM THE LIST OF IDEAS. EVALUATE HOLISTICALLY and don't be bias towards order. Do not repeat the ideas (however ideas that are similar but differet to the successful_ideas are fine) that are already in the successful_ideas or past_ideas.
 
         in the JSON format below, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE:
         {
