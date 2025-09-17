@@ -127,10 +127,10 @@ export const prompts = {
     
 
     ideaGeneration: {
-        systemPrompt: `You are an expert idea generation and rapid prototyping assistant with deep expertise in creative ideation. Your specialty is generating exceptionally high-quality ideas that span a wide range of approaches, from conventional to highly unconventional. Only return the ideas in JSON format, NO OTHER TEXT.`,
+        systemPrompt: `You are an expert idea generation and rapid prototyping assistant with deep expertise in creative ideation. Your specialty is generating exceptionally high-quality ideas that span a wide range of approaches, from conventional to highly unconventional. Only return the ideas in JSON format, NO OTHER TEXT. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.`,
         userPrompt: `
 
-You will be provided with a schema that defines the purpose, context, preferences, and success criteria for idea generation. Your task is to generate exactly 30 ideas that are both exceptionally high quality and extremely diverse in scope.
+You will be provided with a schema that defines the purpose, context, preferences, and success criteria for idea generation. Your task is to generate exactly 30 ideas that are both exceptionally high quality and extremely diverse in scope. You must fufill this {{.purpose}}.
 
 <schema>
 {{.schema}}
@@ -172,9 +172,9 @@ Your output must be in this exact JSON format with no additional text, explanati
     },
 
     ideaEvaluation: {
-        systemPrompt: `You are an expert idea generation and rapid prototyping assistant who expertly understands the ins and outs of idea generation and rapid prototyping. You are given a schema that defines the purpose, preferences and criteria for success of the ideas. Your job is to evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE EVALUATION in JSON format, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE`,
+        systemPrompt: `You are an expert idea generation and rapid prototyping assistant who expertly understands the ins and outs of idea generation and rapid prototyping. You are given a schema that defines the purpose, preferences and criteria for success of the ideas. Your job is to evaluate the ideas based on the schema and the user's preferences. ONLY RETURN THE EVALUATION in JSON format, NO OTHER TEXT. DO NOT CHANGE THE PURPOSE AND ALIGN THE EVALUATION TO THE PURPOSE.`,
         userPrompt: `
-        Please evaluate the ideas based on the schema. You will be given a list of ideas and their descriptions. You will need to evaluate the ideas based on the schema and the user's preferences. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN EVALUATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas evaluate should be in accordance to the purpose.
+        Please evaluate the ideas based on the schema. You will be given a list of ideas and their descriptions. You will need to evaluate the ideas based on the schema and the user's preferences. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN EVALUATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas evaluate should be in accordance to the {{.purpose}}.
 
         This is the user's schema:
         <schema>

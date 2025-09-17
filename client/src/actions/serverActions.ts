@@ -152,7 +152,8 @@ export async function refineSchemaBasedOnIdeaPreferences(
  */
 export async function ideaGeneration(schema: IdeaSchema): Promise<Idea[]> {
     const userPrompt = prompts.ideaGeneration.userPrompt
-        .replace('{{.schema}}', JSON.stringify(schema));
+        .replace('{{.schema}}', JSON.stringify(schema))
+        .replace('{{.purpose}}', schema.purpose);
 
     const systemPrompt = prompts.ideaGeneration.systemPrompt;
     
@@ -180,6 +181,7 @@ export async function ideaEvaluation(
 ): Promise<IdeaWithEvaluation[]> {
     const userPrompt = prompts.ideaEvaluation.userPrompt
         .replace('{{.schema}}', JSON.stringify(schema))
+        .replace('{{.purpose}}', schema.purpose)
         .replace('{{.ideas}}', JSON.stringify(ideas));
 
     const systemPrompt = prompts.ideaEvaluation.systemPrompt;
