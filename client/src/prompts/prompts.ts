@@ -127,7 +127,7 @@ export const prompts = {
     
 
     ideaGeneration: {
-        systemPrompt: `You are an expert idea generation and rapid prototyping assistant with deep expertise in creative ideation. Your specialty is generating exceptionally high-quality ideas that span a wide range of approaches, from conventional to highly unconventional. Only return the ideas in JSON format, NO OTHER TEXT. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.`,
+        systemPrompt: `You are an expert idea generation and rapid prototyping assistant with deep expertise in creative ideation. Your specialty is generating exceptionally high-quality ideas that span a wide range of approaches, from conventional to highly unconventional. Only return the ideas in JSON format, NO OTHER TEXT. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE: {{.purpose}} IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.`,
         userPrompt: `
 
 You will be provided with a schema that defines the purpose, context, preferences, and success criteria for idea generation. Your task is to generate exactly 30 ideas that are both exceptionally high quality and extremely diverse in scope. You must fufill this {{.purpose}}.
@@ -137,7 +137,7 @@ You will be provided with a schema that defines the purpose, context, preference
 </schema>
 
 The schema follows this format:
-- "purpose": The specific goal or objective for the ideas generation and rapid prototyping. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.
+- "purpose": The specific goal or objective for the ideas generation and rapid prototyping. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE: {{.purpose}} IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.
 - "context": The broader situation and background for idea generation and rapid prototyping
 - "criteria": List of qualities that make ideas successful (e.g., "Extremely creative and innovative", "Highly scalable")
 - "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads", "Not too funny and more serious")

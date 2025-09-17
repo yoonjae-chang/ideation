@@ -155,7 +155,8 @@ export async function ideaGeneration(schema: IdeaSchema): Promise<Idea[]> {
         .replace('{{.schema}}', JSON.stringify(schema))
         .replace('{{.purpose}}', schema.purpose);
 
-    const systemPrompt = prompts.ideaGeneration.systemPrompt;
+    const systemPrompt = prompts.ideaGeneration.systemPrompt
+        .replace('{{.purpose}}', schema.purpose);
     
     const result = await callChatCompletion(systemPrompt, userPrompt, "gpt-4o-mini", 1.3, true);
     
