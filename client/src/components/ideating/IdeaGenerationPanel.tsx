@@ -51,7 +51,7 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
           <h2 className="text-xl font-semibold text-gray-900">Generate Ideas</h2>
         </div>
         <p className="text-md text-gray-600">
-          AI will create 50 ideas and return the top 10 based on your ideation plan
+          AI will create 30 ideas and return the top 10 based on your ideation plan
         </p>
       </div>
 
@@ -106,7 +106,7 @@ export default function IdeaGenerationPanel({ schema, onComplete }: IdeaGenerati
               <span className="text-lg text-green-900 font-medium">Generating Ideas...</span>
             </div>
             <p className="text-md text-gray-600">
-              Creating 50 unique ideas based on your schema
+              Creating 30 unique ideas based on your schema
             </p>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <motion.div

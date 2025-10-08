@@ -117,7 +117,7 @@ export default function ContextInputPanel({ onComplete, sessionData, selectedTem
       <div className="text-center">
         <div className="flex items-center justify-center gap-2">
           <h2 className="text-xl font-semibold text-gray-900">
-            {selectedTemplate ? `${selectedTemplate.title} Template` : 'Start Your Brainstorming'}
+            {selectedTemplate ? `${selectedTemplate.title} Template` : 'Start Your Brainstorming (Model: GPT-4o-mini)'}
           </h2>
         </div>
         <p className="text-md text-gray-600">
