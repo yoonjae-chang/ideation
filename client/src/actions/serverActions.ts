@@ -26,6 +26,8 @@ export type IdeaSchema = {
     context: string;
     criteria: string[];
     constraints: string[];
+    successful_ideas?: string[];
+    past_ideas?: string[];
 }
 
 // Helper function to call the chat completion model

@@ -32,7 +32,9 @@ export const prompts = {
             "constraints": [
                 "Relatively feasible to implement for my company",
                 "No traditional billboard ads"
-            ]
+            ],
+            "successful_ideas": [],
+            "past_ideas": []
         }
         `,
         maxTokens: 8000,
@@ -141,7 +143,7 @@ The schema follows this format:
 - "context": The broader situation and background for idea generation and rapid prototyping
 - "criteria": List of qualities that make ideas successful (e.g., "Extremely creative and innovative", "Highly scalable")
 - "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads", "Not too funny and more serious")
-- "successful_examples": Past ideas that worked well (use as inspiration, not templates to copy)
+- "successful_ideas": Past ideas that worked well (use as inspiration, not templates to copy)
 - "past_ideas": Previously generated ideas that should NOT be repeated
 
 Here are your guidelines for idea generation:
@@ -150,7 +152,7 @@ Here are your guidelines for idea generation:
 2. **Extreme diversity**: Ideas should vary widely in direction and approach
 3. **Schema alignment**: Use the purpose and context as your primary guides - these are more important than strict adherence to criteria and constraints. MAKE SURE TO ACTUALLY FUFILL THE PURPOSE IN GENERATING THE IDEAS. THIS IS THE MOST IMPORTANT PART OF THE SCHEMA, and all the ideas generate should be in accordance to the purpose.
 4. **Creative boundaries**: Push both creative and practical boundaries, offering a spectrum from conventional to highly unconventional approaches
-5. **Inspiration, not imitation**: Use successful_examples as inspiration for new directions, but don't limit yourself to similar approaches
+5. **Inspiration, not imitation**: Use successful_ideas as inspiration for new directions, but don't limit yourself to similar approaches
 6. **Avoid repetition**: Do not repeat any ideas from the past_ideas list, though similar but meaningfully different ideas are acceptable
 7. **Originality**: Prioritize fresh, innovative thinking that brings new perspectives to the challenge
 
@@ -186,7 +188,7 @@ Your output must be in this exact JSON format with no additional text, explanati
         - "context": The broader situation and background for idea generation and rapid prototyping
         - "criteria": List of qualities that make ideas successful (e.g., "Extremely creative and innovative", "Highly scalable")
         - "constraints": Limitations or restrictions to consider (e.g., "Relatively feasible to implement", "No traditional billboard ads", "Not too funny and more serious")
-        - "successful_examples": Past ideas that worked well (use as inspiration, not templates to copy)
+        - "successful_ideas": Past ideas that worked well (use as inspiration, not templates to copy)
         - "past_ideas": Previously generated ideas that should NOT be repeated
         
         This is the list of ideas and their descriptions:
